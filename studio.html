@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Glow · Moteur de style</title>
+<meta name="robots" content="noindex,nofollow">
 <meta name="description" content="Décris le style de vidéo que tu veux. Le moteur Glow l'identifie et te donne un prompt prêt à coller dans Claude.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -54,6 +55,11 @@ textarea:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid va
 .ghost{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:99px;padding:9px 16px;font:600 .88rem Inter,sans-serif;cursor:pointer;text-decoration:none;display:inline-block}
 .cta{margin-top:48px;border-top:1px solid var(--line);padding-top:26px;color:var(--muted);font-size:.95rem}
 .cta a{color:var(--ink);font-weight:600}
+.gate{display:block;margin-top:34px;max-width:460px}
+.gate label{display:block;font-weight:600;margin-bottom:8px}
+.gate .row{display:flex;gap:10px}
+.gate input{flex:1;min-width:0;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:99px;padding:14px 18px;font:inherit}
+.gate .gerr{color:#FF7A5C;min-height:1.5em;margin-top:8px;font-size:.92rem}
 .note{font-size:.8rem;color:var(--muted);margin-top:12px}
 @media (max-width:560px){form{flex-direction:column;align-items:stretch}.send{width:100%}textarea{min-height:84px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important}}
@@ -67,8 +73,16 @@ textarea:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid va
   </div>
 
   <span class="eyebrow">Moteur de style</span>
-  <h1 id="title">Décris le style que tu veux.</h1>
-  <p class="lead" id="lead">Écris-le comme tu le dirais à un ami. Le moteur trouve le style, te demande ton script ou ton idée, puis te donne un prompt prêt à coller dans Claude.</p>
+  <h1 id="title">Réservé aux élèves Glow.</h1>
+  <p class="lead" id="lead" data-text="Écris-le comme tu le dirais à un ami. Le moteur trouve le style, te demande ton script ou ton idée, puis te donne un prompt prêt à coller dans Claude." >Entre ton code d'accès pour utiliser le moteur de style.</p>
+
+  <form class="gate" id="gate" autocomplete="off">
+    <label for="code">Code d'accès</label>
+    <div class="row"><input id="code" type="text" autocapitalize="characters" spellcheck="false" placeholder="GLOW-…"><button class="send" id="gsend" type="submit">Entrer</button></div>
+    <div class="gerr" id="gerr" role="alert"></div>
+  </form>
+
+<div id="appbox" hidden>
 
   <div id="thread" aria-live="polite"></div>
 
@@ -81,6 +95,7 @@ textarea:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid va
     <button class="ghost" id="reset" type="button">Nouvelle demande</button>
   </div>
   <p class="note">Réponses générées par une IA : relis le prompt avant de l'utiliser.</p>
+</div>
 
   <p class="cta">Envie d'un style qui est vraiment le tien, appliqué à chaque vidéo ? <a href="fiche-de-style.html">Remplis ta fiche de style</a> (gratuit).</p>
 </div>
@@ -92,7 +107,9 @@ textarea:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid va
       input=document.getElementById('input'), send=document.getElementById('send'),
       chips=document.getElementById('chips'), tools=document.getElementById('tools'),
       title=document.getElementById('title'), lead=document.getElementById('lead');
-  var messages=[], busy=false;
+  var messages=[], busy=false, code='';
+  try{ code=localStorage.getItem('glow-code')||''; }catch(e){}
+  var gate=document.getElementById('gate'), gerr=document.getElementById('gerr'), codeIn=document.getElementById('code'), appbox=document.getElementById('appbox');
   var START=["Une vidéo motion design comme Apple","Style néon cyberpunk","Minimaliste noir et blanc, façon Notion","Rétro années 90 avec du grain","Look magazine de mode, très éditorial"];
 
   function esc(s){return s.replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
@@ -141,11 +158,12 @@ textarea:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid va
     messages.push({role:'user',content:t}); addUser(t); input.value=''; autosize();
     setBusy(true); chips.innerHTML='';
     var tp=typing();
-    fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:messages})})
-    .then(function(r){ return r.json().then(function(j){ return {ok:r.ok,j:j}; }); })
+    fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:messages,code:code})})
+    .then(function(r){ return r.json().then(function(j){ return {ok:r.ok,status:r.status,j:j}; }); })
     .then(function(o){
       tp.remove();
-      if(!o.ok||!o.j.text){ messages.pop(); addErr((o.j&&o.j.error)||'Le moteur est indisponible pour le moment.'); }
+      if(o.status===401){ messages.pop(); lock('Ton code n\u2019est plus valide. Entre-le à nouveau.'); }
+      else if(!o.ok||!o.j.text){ messages.pop(); addErr((o.j&&o.j.error)||'Le moteur est indisponible pour le moment.'); }
       else { messages.push({role:'assistant',content:o.j.text}); addAI(o.j.text); }
     })
     .catch(function(){ tp.remove(); messages.pop(); addErr('Impossible de joindre le moteur. Vérifie ta connexion et réessaie.'); })
@@ -167,7 +185,20 @@ textarea:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid va
     messages=[]; thread.innerHTML=''; title.textContent='Décris le style que tu veux.'; lead.hidden=false;
     input.placeholder='Ex. Je souhaite une vidéo motion design comme Apple'; after(); input.focus();
   });
-  after();
+  function unlock(){ gate.hidden=true; appbox.hidden=false; title.textContent=messages.length?'Ton style, ton prompt.':'Décris le style que tu veux.'; lead.textContent=lead.getAttribute('data-text'); lead.hidden=false; after(); input.focus(); }
+  function lock(msg){ try{ localStorage.removeItem('glow-code'); }catch(e){} code=''; appbox.hidden=true; gate.hidden=false; title.textContent='Réservé aux élèves Glow.'; lead.textContent='Entre ton code d\u2019accès pour utiliser le moteur de style.'; lead.hidden=false; gerr.textContent=msg||''; }
+  function check(c,quiet){
+    return fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({check:true,code:c})})
+    .then(function(r){ return r.json().then(function(j){ return {ok:r.ok,status:r.status,j:j}; }); })
+    .then(function(o){
+      if(o.ok){ code=c; try{ localStorage.setItem('glow-code',c); }catch(e){} unlock(); }
+      else if(o.status===401){ if(!quiet) gerr.textContent='Code invalide. Vérifie-le ou demande-le à Louis.'; lock(quiet?'':gerr.textContent); }
+      else { gerr.textContent=(o.j&&o.j.error)||'Le moteur est indisponible pour le moment.'; }
+    }).catch(function(){ gerr.textContent='Impossible de joindre le moteur. Réessaie.'; });
+  }
+  gate.addEventListener('submit',function(e){ e.preventDefault(); var c=codeIn.value.trim(); if(!c) return; gerr.textContent=''; check(c,false); });
+  appbox.hidden=true; gate.hidden=false;
+  if(code){ check(code,true); }
 })();
 </script>
 </body>

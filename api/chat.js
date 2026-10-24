@@ -1,13 +1,27 @@
 /* Moteur de style Glow : fonction Vercel qui appelle l'API Claude.
    Variables d'environnement (Vercel > Settings > Environment Variables) :
    - ANTHROPIC_API_KEY  (obligatoire)
+   - STUDIO_CODES       (obligatoire) codes d'accès élèves séparés par des virgules, ex. : GLOW-LEA-7K2,GLOW-TOM-9Q4
    - ANTHROPIC_MODEL    (facultatif, défaut ci-dessous) */
 const MODEL = process.env.ANTHROPIC_MODEL || "claude-haiku-5-5";
 const MAX_TOKENS = 2200;
 const MAX_MESSAGES = 14;
 const MAX_CHARS = 6000;
-const LIMIT_PER_HOUR = 30; /* requêtes par IP et par heure (par instance, voir LISEZ-MOI) */
+const LIMIT_PER_HOUR = 40; /* requêtes par code et par heure (par instance, voir LISEZ-MOI) */
 const buckets = new Map();
+const crypto = require("crypto");
+
+function validCode(code) {
+  const list = (process.env.STUDIO_CODES || "").split(",").map((s) => s.trim()).filter(Boolean);
+  if (!list.length || typeof code !== "string" || !code) return false;
+  const a = crypto.createHash("sha256").update(code.trim().toUpperCase()).digest();
+  let ok = false;
+  for (const c of list) {
+    const b = crypto.createHash("sha256").update(c.toUpperCase()).digest();
+    if (crypto.timingSafeEqual(a, b)) ok = true;
+  }
+  return ok;
+}
 
 const SYSTEM = `Tu es le moteur de style de Glow, la méthode de Louis Deploys pour créer des animations verticales (Reels, TikTok, Shorts) avec l'IA. Tu parles français, en tutoyant, de façon simple et concrète.
 
@@ -62,10 +76,13 @@ module.exports = async function handler(req, res) {
     if (host !== req.headers.host) return res.status(403).json({ error: "Origine refusée." });
   }
   if (!process.env.ANTHROPIC_API_KEY) return res.status(500).json({ error: "Le moteur n'est pas configuré." });
-  if (limited(clientIp(req))) return res.status(429).json({ error: "Trop de demandes. Réessaie dans une heure." });
+  if (!process.env.STUDIO_CODES) return res.status(500).json({ error: "Le moteur n'est pas configuré." });
 
   let body = req.body;
   if (typeof body === "string") { try { body = JSON.parse(body); } catch (e) { body = null; } }
+  if (!body || !validCode(body.code)) return res.status(401).json({ error: "Code d'accès invalide." });
+  if (body.check) return res.status(200).json({ ok: true });
+  if (limited(String(body.code).trim())) return res.status(429).json({ error: "Trop de demandes avec ce code. Réessaie dans une heure." });
   const msgs = body && body.messages;
   if (!Array.isArray(msgs) || msgs.length < 1 || msgs.length > MAX_MESSAGES)
     return res.status(400).json({ error: "Conversation invalide." });

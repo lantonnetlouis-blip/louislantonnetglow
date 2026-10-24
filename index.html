@@ -1,0 +1,1020 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Glow : des animations qui claquent en 7 jours</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Glow : passe de vidéos fades à des animations dynamiques en 7 jours, avec ta fiche de style, un skill personnel et un appel chaque semaine. Sans After Effects.">
+<meta property="og:title" content="Glow : des animations qui claquent en 7 jours">
+<meta property="og:description" content="Ta fiche de style, ton skill personnel, un appel par semaine.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..900&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+body{margin:0}
+/* Layout: a dark render studio. One live phone monitor carries the hero; the rest reads like a render log (mono labels, exact numbers), with wide black space between bands. Same identity as the PDF guide. */
+:root{
+  --bg:#0E0E10;        /* fond, identique au guide */
+  --panel:#151518;     /* surfaces */
+  --panel-2:#1B1B1F;
+  --line:#2A2A30;
+  --fg:#F5F3EE;        /* blanc cassé */
+  --muted:#A8A59D;
+  --red:#FF4D2E;       /* le problème */
+  --green:#2ECC71;     /* la solution */
+  --on-red:#FFFFFF;
+  --on-green:#0E0E10;
+  --display:"Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --body:"Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --radius:18px;
+  --wrap:1180px;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:84px}
+body{background:var(--bg); color:var(--fg); font-family:var(--body); font-size:17px; line-height:1.55; -webkit-font-smoothing:antialiased; overflow-x:hidden}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:60; background:var(--bg)}
+body::after{content:""; position:fixed; inset:0; pointer-events:none; z-index:100; background-image:var(--grain,none); opacity:.06; mix-blend-mode:screen}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--red); outline-offset:3px; border-radius:6px}
+.wrap{max-width:var(--wrap); margin:0 auto; padding-left:max(20px, env(safe-area-inset-left,0px)); padding-right:max(20px, env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display); text-wrap:balance; margin:0; letter-spacing:-.035em; line-height:1}
+h2{font-size:clamp(34px,5.2vw,60px); font-weight:850}
+h3{font-size:20px; font-weight:750; letter-spacing:-.015em; line-height:1.2}
+p{margin:0}
+.eyebrow{font-family:var(--mono); font-size:12.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--red); font-weight:600}
+.muted{color:var(--muted)}
+.mono{font-family:var(--mono)}
+.tab{font-variant-numeric:tabular-nums}
+
+/* Header */
+header.top{position:sticky; top:env(safe-area-inset-top,0px); z-index:50; background:color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border-bottom:1px solid var(--line)}
+.top .wrap{display:flex; align-items:center; gap:28px; height:68px}
+.logo{display:flex; align-items:center; gap:10px; font-weight:850; letter-spacing:-.02em; text-decoration:none; font-size:18px}
+.logo svg{flex:none}
+.nav{display:flex; gap:24px; margin-left:auto; font-size:15px}
+.nav a{text-decoration:none; color:var(--muted); transition:color .2s}
+.nav a:hover{color:var(--fg)}
+.btn{display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:48px; padding:0 22px; border-radius:999px; font-weight:750; font-size:16px; text-decoration:none; border:1px solid transparent; cursor:pointer; transition:transform .2s cubic-bezier(.3,1.6,.5,1), background .2s, color .2s, border-color .2s; font-family:var(--body); white-space:nowrap}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn-red{background:var(--red); color:var(--on-red)}
+.btn-red:hover{background:#ff6446}
+.btn-ghost{border-color:var(--line); color:var(--fg); background:transparent}
+.btn-ghost:hover{border-color:var(--fg)}
+.btn-sm{min-height:40px; padding:0 16px; font-size:14.5px}
+@media (max-width:860px){.nav{display:none} .top .btn-sm{margin-left:auto}}
+
+/* Hero */
+.hero{padding-block:64px 40px}
+.hero .wrap{display:grid; grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr); gap:56px; align-items:center}
+.hero h1{font-size:clamp(46px,6.1vw,82px); font-weight:900; letter-spacing:-.05em; line-height:.92; margin-top:22px}
+.hero h1 .r{color:var(--red)}
+.hero h1 .line{display:block}
+.hero .sub{font-size:clamp(17px,1.6vw,20px); color:#cfccc4; max-width:34em; margin-top:26px}
+@media (max-width:900px){.hero .wrap{grid-template-columns:minmax(0,1fr); gap:44px} .hero{padding-block:40px 24px}}
+.hero .ctas{display:flex; flex-wrap:wrap; gap:12px; margin-top:32px}
+.hero .meta{display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:22px; font-family:var(--mono); font-size:12.5px; color:var(--muted)}
+.hero .meta span{display:inline-flex; align-items:center; gap:7px}
+.dot{width:7px; height:7px; border-radius:50%; background:var(--green); display:inline-block}
+.badge{display:inline-flex; align-items:center; gap:9px; padding:7px 14px 7px 10px; border:1px solid var(--line); border-radius:999px; font-size:13.5px; color:#d9d6ce; background:var(--panel)}
+.badge b{background:var(--red); color:var(--on-red); font-size:11px; letter-spacing:.08em; padding:3px 8px; border-radius:999px; font-family:var(--mono)}
+
+/* Phone monitor */
+.monitor{display:flex; flex-direction:column; align-items:center; gap:16px}
+.phone{position:relative; width:min(340px, 82vw); max-width:100%; border-radius:46px; padding:12px; background:linear-gradient(160deg,#2b2b31,#141417 60%); box-shadow:0 40px 90px -30px rgba(255,77,46,.35), 0 0 0 1px #34343b inset}
+.screen{position:relative; width:100%; aspect-ratio:9/16; border-radius:34px; overflow:hidden; background:var(--bg)}
+.screen canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+.rec{position:absolute; top:16px; left:16px; display:flex; align-items:center; gap:7px; font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; color:#d9d6ce; background:rgba(14,14,16,.72); padding:5px 9px; border-radius:999px; z-index:2}
+.rec i{width:7px; height:7px; border-radius:50%; background:var(--red); animation:blink 1.2s infinite}
+@keyframes blink{50%{opacity:.25}}
+.controls{display:flex; flex-wrap:wrap; justify-content:center; gap:8px; width:100%; max-width:420px}
+.chip{font-family:var(--mono); font-size:12.5px; border:1px solid var(--line); background:var(--panel); color:var(--muted); border-radius:999px; min-height:40px; padding:0 14px; cursor:pointer; transition:all .2s}
+.chip:hover{color:var(--fg); border-color:#4a4a52}
+.chip[aria-pressed="true"]{background:var(--fg); color:var(--bg); border-color:var(--fg)}
+.chip.sound[aria-pressed="true"]{background:var(--green); color:var(--on-green); border-color:var(--green)}
+.scrub{width:100%; max-width:420px; height:4px; background:var(--line); border-radius:4px; overflow:hidden; position:relative}
+.scrub span{position:absolute; inset:0 auto 0 0; background:var(--red); width:0}
+.scrub em{position:absolute; top:0; bottom:0; width:2px; background:var(--bg)}
+.caption{font-size:13.5px; color:var(--muted); text-align:center; max-width:30em}
+
+/* Marquee */
+.marquee{border-block:1px solid var(--line); overflow:hidden; padding-block:18px; margin-top:40px}
+.marquee .track{display:flex; gap:44px; width:max-content; animation:slide 38s linear infinite}
+.marquee span{font-family:var(--mono); font-size:14px; color:var(--muted); white-space:nowrap; display:inline-flex; align-items:center; gap:44px}
+.marquee span::after{content:""; width:6px; height:6px; background:var(--red); border-radius:2px; transform:rotate(45deg)}
+@keyframes slide{to{transform:translateX(-50%)}}
+
+/* Sections */
+section.band{padding-block:110px}
+.head{display:grid; gap:18px; margin-bottom:52px; max-width:760px}
+.head p{font-size:19px; color:#cfccc4}
+
+/* Stats */
+.stats{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); border-top:1px solid var(--line); border-left:1px solid var(--line)}
+.stat{padding:34px 30px 30px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); min-width:0; position:relative; overflow:hidden}
+.stat .n{font-family:var(--display); font-weight:900; font-size:clamp(58px,8vw,96px); letter-spacing:-.06em; line-height:.9; font-variant-numeric:tabular-nums}
+.stat .n small{font-size:.42em; letter-spacing:-.02em; margin-left:4px}
+.stat .l{margin-top:14px; font-weight:650; font-size:17px}
+.stat .d{margin-top:6px; color:var(--muted); font-size:15px}
+.stat.g .n{color:var(--green)}
+.stat.r .n{color:var(--red)}
+@media (max-width:860px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.stats{grid-template-columns:minmax(0,1fr)} .stat{padding:26px 22px}}
+
+/* Proof: export */
+.proof{display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr); gap:28px; align-items:stretch}
+.panel{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:28px; min-width:0}
+.lane{display:grid; grid-template-columns:150px minmax(0,1fr); gap:16px; align-items:center; padding-block:14px; border-bottom:1px solid var(--line)}
+.lane:last-of-type{border-bottom:none}
+.lane .t{font-weight:700; font-size:15px; line-height:1.3}
+.lane .t small{display:block; font-family:var(--mono); font-weight:400; font-size:12px; margin-top:4px}
+.lane canvas{width:100%; height:64px; display:block}
+.lane.bad small{color:var(--red)} .lane.good small{color:var(--green)}
+@media (max-width:560px){.lane{grid-template-columns:minmax(0,1fr)}}
+.calc label{display:block; font-family:var(--mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:8px}
+.calc .row{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:22px}
+.calc select,.calc input{width:100%; min-height:48px; background:var(--bg); color:var(--fg); border:1px solid var(--line); border-radius:12px; padding:0 14px; font:600 17px var(--mono)}
+.calc dl{margin:0; display:grid; gap:0}
+.calc dl div{display:flex; justify-content:space-between; gap:12px; padding:13px 0; border-top:1px solid var(--line); font-size:15px}
+.calc dt{color:var(--muted)}
+.calc dd{margin:0; font-family:var(--mono); font-weight:600; font-variant-numeric:tabular-nums; text-align:right}
+.calc dd.ok{color:var(--green)}
+@media (max-width:900px){.proof{grid-template-columns:minmax(0,1fr)}}
+
+/* Gauge strip */
+.gauge-strip{display:grid; grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr); gap:40px; align-items:center; margin-top:28px}
+.gauge-strip svg{width:100%; max-width:440px; height:auto; display:block; margin:0 auto}
+.vs{display:grid; gap:14px}
+.vs div{display:grid; grid-template-columns:minmax(0,1fr) auto auto; gap:14px; align-items:center; padding:16px 18px; border:1px solid var(--line); border-radius:14px; background:var(--panel)}
+.vs b{font-weight:650; font-size:15.5px}
+.vs .a{font-family:var(--mono); color:var(--muted); text-decoration:line-through; font-size:14px}
+.vs .b{font-family:var(--mono); color:var(--green); font-weight:600; font-size:14px}
+@media (max-width:820px){.gauge-strip{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:560px){.vs div{grid-template-columns:auto auto; justify-content:start; gap:6px 14px} .vs b{grid-column:1 / -1}}
+
+/* Contents */
+.parts{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px}
+.part{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:26px 26px 18px; min-width:0}
+.part .pl{display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:14px}
+.part .pl span{font-family:var(--mono); font-size:12.5px; color:var(--muted)}
+.part ol{list-style:none; margin:0; padding:0}
+.part li{display:grid; grid-template-columns:34px minmax(0,1fr); gap:8px; padding:11px 0; border-top:1px solid var(--line); font-size:15.5px}
+.part li i{font-style:normal; font-family:var(--mono); font-size:13px; color:var(--red); padding-top:2px}
+.part.hl{border-color:var(--red); background:linear-gradient(180deg, rgba(255,77,46,.09), var(--panel) 40%)}
+@media (max-width:900px){.parts{grid-template-columns:minmax(0,1fr)}}
+
+/* Prompt window */
+.prompt{display:grid; grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr); gap:48px; align-items:center}
+.code{background:#09090B; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; min-width:0}
+.code .bar{display:flex; align-items:center; gap:8px; padding:12px 16px; border-bottom:1px solid var(--line); font-family:var(--mono); font-size:12px; color:var(--muted)}
+.code .bar i{width:10px; height:10px; border-radius:50%; background:#2f2f35}
+.code .bar span{margin-left:8px}
+.code .bar button{margin-left:auto}
+.code pre{margin:0; padding:22px 22px 26px; font-family:var(--mono); font-size:13.5px; line-height:1.65; white-space:pre-wrap; word-break:break-word; color:#e6e3dc; overflow-x:auto}
+.code .k{color:var(--red); font-weight:600}
+.code .v{color:var(--green)}
+.code .caret{display:inline-block; width:8px; height:1.1em; background:var(--fg); vertical-align:-3px; animation:blink 1s steps(1) infinite}
+.bul{display:grid; gap:14px; margin-top:26px; padding:0; list-style:none}
+.bul li{display:grid; grid-template-columns:22px minmax(0,1fr); gap:12px; font-size:16.5px}
+.bul li svg{margin-top:3px}
+@media (max-width:900px){.prompt{grid-template-columns:minmax(0,1fr)}}
+
+/* Steps */
+.steps{display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:0; counter-reset:s; border-top:1px solid var(--line)}
+.step{padding:26px 18px 6px 0; position:relative; min-width:0}
+.step::before{counter-increment:s; content:counter(s, decimal-leading-zero); display:block; font-family:var(--mono); font-size:13px; color:var(--red); margin-bottom:46px}
+.step::after{content:""; position:absolute; top:-5px; left:0; width:9px; height:9px; border-radius:50%; background:var(--fg)}
+.step h3{font-size:17px}
+.step p{margin-top:8px; font-size:14.5px; color:var(--muted)}
+@media (max-width:1000px){.steps{grid-template-columns:repeat(2,minmax(0,1fr)); border-top:none; gap:0 20px} .step{border-top:1px solid var(--line)} .step::before{margin-bottom:18px}}
+@media (max-width:480px){.steps{grid-template-columns:minmax(0,1fr)}}
+
+/* For who */
+.who{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px}
+.who .panel h3{margin-bottom:18px}
+.who ul{list-style:none; padding:0; margin:0; display:grid; gap:12px}
+.who li{display:grid; grid-template-columns:22px minmax(0,1fr); gap:12px; font-size:16.5px}
+@media (max-width:760px){.who{grid-template-columns:minmax(0,1fr)}}
+
+/* Results placeholders */
+.results{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px}
+.res{border:1.5px dashed #46464e; border-radius:var(--radius); padding:28px; min-width:0}
+.res .n{font-family:var(--display); font-weight:900; font-size:56px; letter-spacing:-.05em; color:#5d5c62}
+.res p{margin-top:8px; color:var(--muted)}
+.todo{display:inline-block; margin-top:16px; font-family:var(--mono); font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--bg); background:#FFC94D; padding:4px 9px; border-radius:6px}
+@media (max-width:860px){.results{grid-template-columns:minmax(0,1fr)}}
+
+/* Offer */
+.offer{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); background:var(--panel); border:1px solid var(--line); border-radius:28px; overflow:hidden}
+.offer .l{padding:48px; border-right:1px solid var(--line); display:flex; flex-direction:column; gap:22px}
+.offer .r{padding:48px; min-width:0}
+.price{display:flex; align-items:flex-start; gap:6px; font-family:var(--display); font-weight:900; letter-spacing:-.06em; line-height:.85}
+.price .big{font-size:clamp(96px,13vw,150px)}
+.price .cur{font-size:44px; margin-top:12px}
+.offer ul{list-style:none; padding:0; margin:0; display:grid; gap:0}
+.offer li{display:grid; grid-template-columns:22px minmax(0,1fr) auto; gap:12px; padding:13px 0; border-bottom:1px solid var(--line); font-size:16px}
+.offer li .q{font-family:var(--mono); color:var(--muted); font-size:13.5px}
+.offer .btn{width:100%; min-height:58px; font-size:17.5px}
+.fine{font-size:13.5px; color:var(--muted)}
+@media (max-width:860px){.offer{grid-template-columns:minmax(0,1fr)} .offer .l{border-right:none; border-bottom:1px solid var(--line); padding:32px 24px} .offer .r{padding:28px 24px}}
+
+/* FAQ */
+.faq{max-width:860px}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:20px; padding:24px 0; font-weight:700; font-size:19px; letter-spacing:-.01em}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary .pm{flex:none; width:30px; height:30px; border-radius:50%; border:1px solid var(--line); display:grid; place-items:center; transition:transform .3s, background .2s}
+.faq details[open] .pm{transform:rotate(45deg); background:var(--red); border-color:var(--red)}
+.faq details p{padding:0 50px 24px 0; color:#cfccc4; max-width:62ch}
+
+/* Final */
+.final{text-align:center; padding-block:120px 100px}
+.final h2{font-size:clamp(44px,8vw,104px); letter-spacing:-.055em; font-weight:900}
+.final h2 .r{color:var(--red)}
+.final p{margin:22px auto 34px; color:#cfccc4; max-width:34em; font-size:18px}
+footer{border-top:1px solid var(--line); padding-block:36px}
+footer .wrap{display:flex; flex-wrap:wrap; justify-content:space-between; gap:18px; font-size:13px; color:var(--muted)}
+footer p{max-width:62ch}
+
+/* Avant / après */
+.ba{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px}
+.ba-col{border-radius:var(--radius); padding:30px; border:1px solid var(--line); min-width:0}
+.ba-col.bad{background:var(--panel)}
+.ba-col.good{background:linear-gradient(180deg, rgba(46,204,113,.08), var(--panel) 55%); border-color:rgba(46,204,113,.45)}
+.ba-col h3{margin-bottom:18px; display:flex; align-items:center; gap:10px}
+.ba-col ul{list-style:none; margin:0; padding:0; display:grid; gap:14px}
+.ba-col li{display:grid; grid-template-columns:22px minmax(0,1fr); gap:12px; font-size:16.5px}
+.ba-col.bad li{color:var(--muted)}
+.ba-col li svg{margin-top:3px}
+.h-muted{color:var(--muted)}
+@media (max-width:760px){.ba{grid-template-columns:minmax(0,1fr)}}
+
+/* Cadeau CLAUDE.md */
+.gift{display:grid; grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr); gap:48px; align-items:center}
+.gift p.lede{font-size:18px; color:#cfccc4; margin-top:20px}
+.gift .code pre{max-height:420px; overflow:auto}
+.copy{font-family:var(--mono); font-size:12.5px; min-height:36px; padding:0 14px; border-radius:999px; border:1px solid var(--line); background:var(--panel-2); color:var(--fg); cursor:pointer}
+.copy:hover{border-color:var(--fg)}
+.copy.done{background:var(--green); color:var(--on-green); border-color:var(--green)}
+@media (max-width:900px){.gift{grid-template-columns:minmax(0,1fr)}}
+
+/* Après l'achat */
+.after{list-style:none; padding:0; margin:0; display:grid; gap:12px; counter-reset:a}
+.after li{counter-increment:a; display:grid; grid-template-columns:30px minmax(0,1fr); gap:12px; font-size:15px; color:#cfccc4}
+.after li::before{content:counter(a); width:26px; height:26px; border-radius:50%; border:1px solid var(--line); display:grid; place-items:center; font-family:var(--mono); font-size:12.5px; color:var(--fg)}
+.per{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; padding:14px 16px; border:1px dashed #3a3a42; border-radius:14px}
+.per b{font-family:var(--mono); font-size:22px; color:var(--green)}
+.per span{font-size:14.5px; color:var(--muted)}
+
+/* Auteur */
+.author{display:grid; grid-template-columns:auto minmax(0,1fr); gap:32px; align-items:center; max-width:920px; padding:36px; border:1px solid var(--line); border-radius:var(--radius); background:var(--panel)}
+.author .mark{width:96px; height:96px; border-radius:50%; background:var(--fg); color:var(--bg); display:grid; place-items:center; font-weight:900; font-size:32px; letter-spacing:-.04em}
+.author .quote{font-size:clamp(19px,2vw,23px); line-height:1.45; font-weight:550; letter-spacing:-.01em; margin-top:12px}
+.author .sig{margin-top:14px; color:var(--muted); font-size:15px}
+.author .sig b{color:var(--fg)}
+@media (max-width:640px){.author{grid-template-columns:minmax(0,1fr); padding:26px}}
+
+/* Pas pour toi */
+.who.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:980px){.who.three{grid-template-columns:minmax(0,1fr)}}
+
+/* Barre d'achat mobile */
+.mbar{display:none}
+@media (max-width:760px){
+  .mbar{position:fixed; left:0; right:0; bottom:0; z-index:55; display:flex; align-items:center; justify-content:space-between; gap:14px;
+    padding:12px max(16px, env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px, env(safe-area-inset-left,0px));
+    background:color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border-top:1px solid var(--line);
+    transform:translateY(110%); transition:transform .35s cubic-bezier(.2,.9,.25,1)}
+  .mbar.on{transform:none}
+  .mbar b{font-size:20px; font-weight:900; letter-spacing:-.03em}
+  .mbar span{display:block; font-size:12.5px; color:var(--muted)}
+  footer{padding-bottom:110px}
+}
+
+/* Deux offres */
+.plans{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:22px; align-items:stretch}
+.plan{position:relative; background:var(--panel); border:1px solid var(--line); border-radius:26px; padding:38px 36px 34px; display:flex; flex-direction:column; gap:20px; min-width:0}
+.plan.best{border:1.5px solid var(--red); background:linear-gradient(180deg, rgba(255,77,46,.10), var(--panel) 42%); box-shadow:0 30px 80px -40px rgba(255,77,46,.55)}
+.plan .tag{position:absolute; top:-13px; left:32px; background:var(--red); color:var(--on-red); font-family:var(--mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; padding:5px 11px; border-radius:999px; font-weight:600}
+.plan h3{font-size:24px}
+.plan .for{color:var(--muted); font-size:15.5px; margin-top:-8px}
+.plan .price .big{font-size:clamp(84px,10vw,120px)}
+.plan .price .cur{font-size:38px; margin-top:10px}
+.plan ul{list-style:none; padding:0; margin:0; display:grid; gap:12px; flex:1; align-content:start}
+.plan li{display:grid; grid-template-columns:22px minmax(0,1fr); gap:12px; font-size:15.5px}
+.plan li.dim{color:var(--muted)}
+.plan .btn{width:100%; min-height:56px; font-size:17px}
+.plan .per{margin-top:-4px}
+.after-row{margin-top:26px; display:grid; grid-template-columns:auto minmax(0,1fr); gap:24px; align-items:center; padding:24px 28px; border:1px solid var(--line); border-radius:var(--radius)}
+.after-row .after{grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px}
+@media (max-width:900px){.plans{grid-template-columns:minmax(0,1fr)} .plan.best{order:-1} .after-row{grid-template-columns:minmax(0,1fr)} .after-row .after{grid-template-columns:minmax(0,1fr)}}
+.legal-links{display:flex; flex-wrap:wrap; gap:8px 18px}
+.legal-links a{color:var(--muted)}
+
+/* Pied de page */
+.foot-nav{display:flex; flex-wrap:wrap; gap:10px 22px}
+.foot-nav a{color:var(--muted); text-decoration:none}
+.foot-nav a:hover{color:var(--fg)}
+
+/* Motion */
+.rv{transition:transform .9s cubic-bezier(.2,.9,.25,1), opacity .9s}
+.rv.armed{transform:translateY(28px); opacity:.55}
+.hero .anim{animation:rise .9s cubic-bezier(.2,.9,.25,1) both}
+@keyframes rise{from{transform:translateY(22px); opacity:0}}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important; transition:none!important; scroll-behavior:auto!important}
+  .rv.armed{transform:none; opacity:1}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Glow, retour en haut">
+      <svg width="30" height="20" viewBox="0 0 60 40" aria-hidden="true"><path d="M6 34 A24 24 0 0 1 54 34" fill="none" stroke="#2A2A30" stroke-width="7" stroke-linecap="round"/><path d="M6 34 A24 24 0 0 1 18 13" fill="none" stroke="#2ECC71" stroke-width="7" stroke-linecap="round"/><path d="M42 13 A24 24 0 0 1 54 34" fill="none" stroke="#FF4D2E" stroke-width="7" stroke-linecap="round"/><line x1="30" y1="34" x2="43" y2="19" stroke="#F5F3EE" stroke-width="4" stroke-linecap="round"/><circle cx="30" cy="34" r="4.5" fill="#F5F3EE"/></svg>
+      Glow
+    </a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#demo">Démo</a><a href="#preuves">Preuves</a><a href="#fiche">Fiche de style</a><a href="#methode">Méthode</a><a href="#rejoindre">Appel découverte</a><a href="#faq">FAQ</a>
+    </nav>
+    <a class="btn btn-red btn-sm buy" href="#rejoindre">Appel découverte</a>
+  </div>
+</header>
+
+<main id="top">
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="badge anim"><b>GLOW</b>7 jours · un appel par semaine</span>
+      <h1 class="anim" style="animation-delay:.08s"><span class="line">Des animations</span><span class="line">qui claquent,</span><span class="line r">en 7 jours.</span></h1>
+      <p class="sub anim" style="animation-delay:.16s">Tu montes déjà tes vidéos, mais le rendu te déçoit ? Avec Glow, tu passes de « fade » à pro : ta fiche de style, un skill personnel, ton script ligne par ligne, et un appel chaque semaine. Sans After Effects, sans background créatif.</p>
+      <div class="ctas anim" style="animation-delay:.24s">
+        <a class="btn btn-red buy buy-glow" href="#rejoindre">Réserver un appel découverte</a>
+        <a class="btn btn-ghost" href="fiche-de-style.html">Essayer la fiche de style</a>
+      </div>
+      <div class="meta anim" style="animation-delay:.32s">
+        <span><i class="dot"></i>7 jours</span><span><i class="dot"></i>1 appel / semaine</span><span><i class="dot"></i>19 questions</span><span><i class="dot"></i>1080 × 1920</span><span><i class="dot"></i>MP4 H.264 + AAC</span><span><i class="dot"></i>WAV 24 bits</span><span><i class="dot"></i>25 · 30 · 50 · 60 i/s</span>
+      </div>
+    </div>
+
+    <div class="monitor anim" id="demo" style="animation-delay:.2s">
+      <div class="phone">
+        <div class="screen">
+          <div class="rec"><i></i><span id="recLabel">INSERT A</span></div>
+          <canvas id="stage" width="540" height="960" role="img" aria-label="Démo animée : une pile de tâches grossit jusqu'à vingt, un chronomètre de deux minutes apparaît, puis trois tâches se ferment en vert."></canvas>
+        </div>
+      </div>
+      <div class="scrub" aria-hidden="true"><span id="scrubFill"></span><em style="left:29.4%"></em><em style="left:64.7%"></em></div>
+      <div class="controls" role="group" aria-label="Contrôles de la démo">
+        <button class="chip" id="cA" type="button" aria-pressed="true">A · 20 tâches</button>
+        <button class="chip" id="cB" type="button" aria-pressed="false">B · 2 minutes</button>
+        <button class="chip" id="cC" type="button" aria-pressed="false">C · 3 tâches</button>
+        <button class="chip" id="cPlay" type="button" aria-pressed="false" aria-label="Pause">❚❚</button>
+        <button class="chip sound" id="cSound" type="button" aria-pressed="false">Son : coupé</button>
+      </div>
+      <p class="caption">Trois animations d'exemple, rendues en direct dans ton navigateur avec la même méthode que celle de Glow. Active le son pour entendre les bruitages générés en code.</p>
+    </div>
+  </div>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="track">
+      <span>Instagram Reels</span><span>TikTok</span><span>YouTube Shorts</span><span>Claude</span><span>DaVinci Resolve</span><span>Chrome · Edge</span><span>MP4 H.264</span><span>AAC 48 kHz</span><span>WAV 24 bits</span><span>Canvas 1080 × 1920</span><span>Web Audio API</span><span>WebCodecs</span>
+      <span>Instagram Reels</span><span>TikTok</span><span>YouTube Shorts</span><span>Claude</span><span>DaVinci Resolve</span><span>Chrome · Edge</span><span>MP4 H.264</span><span>AAC 48 kHz</span><span>WAV 24 bits</span><span>Canvas 1080 × 1920</span><span>Web Audio API</span><span>WebCodecs</span>
+    </div>
+  </div>
+</section>
+
+<!-- AVANT / APRES -->
+<section class="band" id="probleme" style="padding-top:80px">
+  <div class="wrap">
+    <div class="head rv">
+      <span class="eyebrow">Le problème</span>
+      <h2>Tu fais des efforts. <span class="h-muted">Tes vidéos font quand même amateur.</span></h2>
+      <p>Tu sens qu'il manque quelque chose, sans savoir quoi ni comment le corriger. Ce n'est pas un manque de talent : il te manque un style défini et les bons outils pour l'appliquer.</p>
+    </div>
+    <div class="ba">
+      <div class="ba-col bad rv"><h3>Aujourd'hui</h3>
+        <ul>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M6 6l8 8M14 6l-8 8" fill="none" stroke="#FF4D2E" stroke-width="2.2" stroke-linecap="round"/></svg>Tes vidéos sont plates et le rendu ne ressemble pas à ce que tu as en tête.</li>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M6 6l8 8M14 6l-8 8" fill="none" stroke="#FF4D2E" stroke-width="2.2" stroke-linecap="round"/></svg>Tu vois d'autres créateurs avec des transitions et des effets au top, et tu ne comprends pas comment ils font.</li>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M6 6l8 8M14 6l-8 8" fill="none" stroke="#FF4D2E" stroke-width="2.2" stroke-linecap="round"/></svg>Tu passes des heures au montage pour un résultat qui ne te satisfait pas.</li>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M6 6l8 8M14 6l-8 8" fill="none" stroke="#FF4D2E" stroke-width="2.2" stroke-linecap="round"/></svg>Tu n'oses pas partager certaines vidéos tellement elles te semblent basiques.</li>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M6 6l8 8M14 6l-8 8" fill="none" stroke="#FF4D2E" stroke-width="2.2" stroke-linecap="round"/></svg>After Effects te paraît trop technique et trop cher pour y investir du temps.</li>
+        </ul></div>
+      <div class="ba-col good rv"><h3>Avec Glow</h3>
+        <ul>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.4 3.4L15.5 6.8" fill="none" stroke="#2ECC71" stroke-width="2.4" stroke-linecap="round"/></svg>Tu remplis une fiche de style : ton univers, tes couleurs, tes inspirations.</li>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.4 3.4L15.5 6.8" fill="none" stroke="#2ECC71" stroke-width="2.4" stroke-linecap="round"/></svg>Tu reçois un skill personnel, préparé par moi à partir de ta fiche.</li>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.4 3.4L15.5 6.8" fill="none" stroke="#2ECC71" stroke-width="2.4" stroke-linecap="round"/></svg>Tu envoies ton script ligne par ligne, tu valides chaque scène.</li>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.4 3.4L15.5 6.8" fill="none" stroke="#2ECC71" stroke-width="2.4" stroke-linecap="round"/></svg>Un appel chaque semaine pour ajuster ton style et débloquer ce qui coince.</li>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.4 3.4L15.5 6.8" fill="none" stroke="#2ECC71" stroke-width="2.4" stroke-linecap="round"/></svg>Tes vidéos gardent le même style, d'un Reel à l'autre.</li>
+        </ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- PREUVES -->
+<section class="band" id="preuves" style="padding-top:20px">
+  <div class="wrap">
+    <div class="head rv">
+      <span class="eyebrow">La preuve par l'export</span>
+      <h2>Pas un enregistrement d'écran. <span style="color:var(--green)">Un rendu image par image.</span></h2>
+      <p>Filmer une animation qui tourne donne une cadence variable que DaVinci gère mal : saccades, son décalé, durée fausse. La méthode du guide fait calculer chaque image une par une, puis l'encode en vrai MP4 à cadence fixe.</p>
+    </div>
+    <div class="proof">
+      <div class="panel rv">
+        <div class="lane bad"><div class="t">Enregistrement d'écran<small>cadence variable</small></div><canvas id="laneBad" aria-label="Images espacées de façon irrégulière, certaines manquantes" role="img"></canvas></div>
+        <div class="lane good"><div class="t">Rendu image par image<small>1 image = 1/30 s, exactement</small></div><canvas id="laneGood" aria-label="Images espacées de façon parfaitement régulière" role="img"></canvas></div>
+        <p class="muted" style="font-size:14.5px;margin-top:14px">Chaque trait est une image envoyée à DaVinci. En haut, des intervalles irréguliers et des images perdues. En bas, la même cadence du début à la fin.</p>
+      </div>
+      <div class="panel calc rv" aria-labelledby="calcTitle">
+        <h3 id="calcTitle" style="margin-bottom:6px">Calcule ta scène</h3>
+        <p class="muted" style="font-size:14.5px;margin-bottom:20px">Les mêmes formules que celles écrites dans le prompt d'export.</p>
+        <div class="row">
+          <div><label for="fps">Images/s</label><select id="fps"><option>25</option><option selected>30</option><option>50</option><option>60</option></select></div>
+          <div><label for="dur">Durée (s)</label><input id="dur" type="number" min="0.5" max="90" step="0.1" value="6" inputmode="decimal"></div>
+        </div>
+        <dl>
+          <div><dt>Images à rendre</dt><dd id="oFrames">180</dd></div>
+          <div><dt>Échantillons audio</dt><dd id="oSamples">288 000</dd></div>
+          <div><dt>Échantillons par image</dt><dd id="oPer">1 600</dd></div>
+          <div><dt>Décalage son / image</dt><dd class="ok">0 échantillon</dd></div>
+        </dl>
+      </div>
+    </div>
+
+    <div class="gauge-strip">
+      <svg viewBox="0 0 400 230" role="img" aria-label="Jauge dont l'aiguille passe du rouge au vert">
+        <path d="M40 200 A160 160 0 0 1 360 200" fill="none" stroke="#2A2A30" stroke-width="24" stroke-linecap="round"/>
+        <path d="M40 200 A160 160 0 0 1 120 61.4" fill="none" stroke="#2ECC71" stroke-width="24" stroke-linecap="round"/>
+        <path d="M280 61.4 A160 160 0 0 1 360 200" fill="none" stroke="#FF4D2E" stroke-width="24" stroke-linecap="round"/>
+        <g id="needle" style="transform-origin:200px 200px; transform:rotate(-55deg)"><line x1="200" y1="200" x2="200" y2="72" stroke="#F5F3EE" stroke-width="9" stroke-linecap="round"/></g>
+        <circle cx="200" cy="200" r="16" fill="#F5F3EE"/>
+      </svg>
+      <div class="vs rv">
+        <div><b>Logiciel de motion design</b><span class="a">abonnement</span><span class="b">0 €</span></div>
+        <div><b>Banque de bruitages</b><span class="a">licence</span><span class="b">générés en code</span></div>
+        <div><b>Export pour le montage</b><span class="a">capture d'écran</span><span class="b">MP4 cadence fixe</span></div>
+        <div><b>Identité visuelle</b><span class="a">à refaire à chaque fois</span><span class="b">gravée une fois</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="band" id="contenu-chiffres" style="padding-top:20px">
+  <div class="wrap">
+    <div class="head rv">
+      <span class="eyebrow">Ce que tu obtiens</span>
+      <h2>Concret, du premier jour.</h2>
+    </div>
+    <div class="stats">
+      <div class="stat rv"><div class="n tab"><span class="count" data-to="7">7</span></div><div class="l">jours</div><div class="d">Pour passer de ta fiche à tes premières animations.</div></div>
+      <div class="stat rv"><div class="n tab"><span class="count" data-to="1">1</span></div><div class="l">appel par semaine</div><div class="d">Ajustable selon ton besoin.</div></div>
+      <div class="stat rv"><div class="n tab"><span class="count" data-to="19">19</span></div><div class="l">questions de style</div><div class="d">Univers, cible, couleurs, typo, mouvement, inspirations.</div></div>
+      <div class="stat rv"><div class="n tab"><span class="count" data-to="1">1</span></div><div class="l">skill personnel</div><div class="d">Préparé à partir de ta fiche, avec un contrôle qualité.</div></div>
+      <div class="stat g rv"><div class="n tab"><span class="count" data-to="0">0</span><small>€</small></div><div class="l">de logiciel à acheter</div><div class="d">Pas d'After Effects. Claude Pro est conseillé.</div></div>
+      <div class="stat r rv"><div class="n tab"><span class="count" data-to="1920">1920</span></div><div class="l">pixels de haut</div><div class="d">Format vertical 1080 × 1920, MP4 H.264 + AAC, cadence fixe.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROMPT -->
+<section class="band" style="padding-top:20px">
+  <div class="wrap prompt">
+    <div class="rv">
+      <span class="eyebrow">Le script ligne par ligne</span>
+      <h2 style="margin-top:18px">Tu écris. L'IA dessine, sonorise, exporte.</h2>
+      <ul class="bul">
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.4 3.4L15.5 6.8" fill="none" stroke="#2ECC71" stroke-width="2.4" stroke-linecap="round"/></svg><span>Tu envoies ton script une ligne à la fois : l'IA anime la scène, tu valides ou tu corriges.</span></li>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.4 3.4L15.5 6.8" fill="none" stroke="#2ECC71" stroke-width="2.4" stroke-linecap="round"/></svg><span>Ton script reste intact : l'animation se dessine autour de tes mots.</span></li>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.4 3.4L15.5 6.8" fill="none" stroke="#2ECC71" stroke-width="2.4" stroke-linecap="round"/></svg><span>Ton skill garde ton style identique de la première à la dernière scène.</span></li>
+</ul>
+    </div>
+    <div class="code rv">
+      <div class="bar"><i></i><i></i><i></i><span>script/ligne-03.txt</span></div>
+<pre id="typed"><span class="k">INSERT A — environ 5 s — fichier : insert-A-20-taches</span>
+Sur : « Chaque petite tâche que tu repousses reste ouverte dans ta tête. Une, puis cinq, puis vingt. »
+Visuel : <span class="v">une carte « tâche » entre par le bas avec un léger overshoot. Un compteur en très gros affiche « 1 ». Les cartes s'empilent de plus en plus vite, le compteur passe à « 5 » puis à « 20 ». À partir de 10 cartes, les bords passent au rouge-orangé.</span>
+Son :
+- <span class="v">whoosh court à l'entrée de la première carte</span>
+- <span class="v">pop doux à chaque carte, qui accélère</span>
+- <span class="v">son grave et mat quand le compteur atteint « 20 »</span><span class="caret"></span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- CADEAU -->
+<section class="band" id="fiche" style="padding-top:20px">
+  <div class="wrap gift">
+    <div class="rv">
+      <span class="eyebrow" style="color:var(--green)">Gratuit · sans e-mail</span>
+      <h2 style="margin-top:18px">Remplis ta fiche de style maintenant.</h2>
+      <p class="lede">C'est la première étape de Glow, et tu peux l'essayer tout de suite : 19 questions, un aperçu vertical en direct, puis ta fiche en PDF, en fichier JSON et en texte à copier. Voici à quoi ressemble un extrait.</p>
+      <div class="ctas" style="display:flex;flex-wrap:wrap;gap:12px;margin-top:28px"><a class="btn btn-red" href="fiche-de-style.html">Remplir ma fiche de style</a><a class="btn btn-ghost" href="#rejoindre">Appel découverte</a></div>
+    </div>
+    <div class="code rv">
+      <div class="bar"><i></i><i></i><i></i><span>fiche-de-style.txt</span><button class="copy" id="copyMd" type="button">Copier</button></div>
+<pre id="mdText"><span class="k"># Fiche de style : exemple</span>
+
+<span class="k">## Univers</span>
+- Ambiance : sobre, précise, un peu technique.
+- Public : créateurs qui publient en solo.
+
+<span class="k">## Couleurs</span>
+- Fond #0E0E10, texte #F5F3EE, accent #FF4D2E.
+
+<span class="k">## Typographie</span>
+- Une seule police sans-serif grasse et géométrique.
+
+<span class="k">## Mouvement</span>
+- Sec et précis : cubic-bezier(.2,.9,.1,1), 0,28 s.
+- Bruitages discrets, jamais de musique sous la voix.
+
+<span class="k">## Contraintes</span>
+- Rien d'important dans les 250 px du bas ni les 120 px de droite.</pre>
+    </div>
+  </div>
+</section>
+
+<!-- CONTENU -->
+<section class="band" id="contenu" style="padding-top:20px">
+  <div class="wrap">
+    <div class="head rv">
+      <span class="eyebrow">Le parcours</span>
+      <h2>Ce que tu fais, dans l'ordre.</h2>
+      <p>Tu commences par un appel découverte, puis tu avances en 7 jours avec un appel chaque semaine.</p>
+    </div>
+    <div class="parts">
+      <div class="part rv"><div class="pl"><h3>Ton style</h3><span>jours 1 à 2</span></div>
+        <ol>
+          <li><i>01</i>Appel découverte</li>
+          <li><i>02</i>Remplir les fiches : contenu, cible, style, inspirations</li>
+          <li><i>03</i>Valider ta fiche de style</li>
+        </ol></div>
+      <div class="part hl rv"><div class="pl"><h3>Ton skill</h3><span>jours 3 à 4</span></div>
+        <ol>
+          <li><i>04</i>Je prépare ton skill personnel</li>
+          <li><i>05</i>Tu installes Claude (version Pro conseillée)</li>
+          <li><i>06</i>Tu installes ton skill</li>
+        </ol></div>
+      <div class="part rv"><div class="pl"><h3>Ta production</h3><span>jours 5 à 7</span></div>
+        <ol>
+          <li><i>07</i>Utiliser ton skill avec tes propres scripts</li>
+          <li><i>08</i>Valider ou corriger chaque scène</li>
+          <li><i>09</i>Exporter le MP4 et monter</li>
+        </ol></div>
+    </div>
+  </div>
+</section>
+
+<!-- METHODE -->
+<section class="band" id="methode" style="padding-top:20px">
+  <div class="wrap">
+    <div class="head rv">
+      <span class="eyebrow">La méthode</span>
+      <h2>De ta fiche au MP4 en 4 étapes.</h2>
+    </div>
+    <div class="steps">
+      <div class="step rv"><h3>Ta fiche de style</h3><p>19 questions, un PDF et un JSON.</p></div>
+      <div class="step rv"><h3>Ton skill personnel</h3><p>Fourni par moi, entièrement personnalisé.</p></div>
+      <div class="step rv"><h3>Ton script, ligne par ligne</h3><p>Tu valides chaque scène, un appel par semaine pour ajuster.</p></div>
+      <div class="step rv"><h3>Ton animation en MP4</h3><p>Rendu image par image, cadence fixe, son inclus.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- RESULTATS (à remplir) -->
+
+
+<!-- POUR QUI -->
+<section class="band" style="padding-top:20px">
+  <div class="wrap">
+    <div class="head rv"><span class="eyebrow">Pour qui</span><h2>Pour les créateurs dont le rendu ne suit pas.</h2></div>
+    <div class="who three">
+      <div class="panel rv"><h3>Glow est fait pour toi si…</h3>
+        <ul>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.4 3.4L15.5 6.8" fill="none" stroke="#2ECC71" stroke-width="2.4" stroke-linecap="round"/></svg>Tu montes déjà tes vidéos et le résultat te déçoit.</li>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.4 3.4L15.5 6.8" fill="none" stroke="#2ECC71" stroke-width="2.4" stroke-linecap="round"/></svg>Tu veux des animations dynamiques sans apprendre After Effects.</li>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.4 3.4L15.5 6.8" fill="none" stroke="#2ECC71" stroke-width="2.4" stroke-linecap="round"/></svg>Tu veux un style qu'on reconnaît d'une vidéo à l'autre.</li>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.4 3.4L15.5 6.8" fill="none" stroke="#2ECC71" stroke-width="2.4" stroke-linecap="round"/></svg>Tu es prêt à relire et valider chaque scène.</li>
+        </ul></div>
+      <div class="panel rv"><h3>Ce qu'il te faut</h3>
+        <ul>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="4" fill="#FF4D2E"/></svg>Claude, de préférence en version Pro.</li>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="4" fill="#FF4D2E"/></svg>Chrome ou Edge à jour, sur Mac ou Windows.</li>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="4" fill="#FF4D2E"/></svg>Un script, même court. Aucune ligne de code à écrire.</li>
+        </ul></div>
+      <div class="panel rv"><h3>Glow n'est pas pour toi si…</h3>
+        <ul>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M6 6l8 8M14 6l-8 8" fill="none" stroke="#A8A59D" stroke-width="2.2" stroke-linecap="round"/></svg>Tu cherches un montage fait à ta place, sans relire ni valider.</li>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M6 6l8 8M14 6l-8 8" fill="none" stroke="#A8A59D" stroke-width="2.2" stroke-linecap="round"/></svg>Tu veux copier le style de quelqu'un d'autre.</li>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M6 6l8 8M14 6l-8 8" fill="none" stroke="#A8A59D" stroke-width="2.2" stroke-linecap="round"/></svg>Tu attends une garantie de vues.</li>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M6 6l8 8M14 6l-8 8" fill="none" stroke="#A8A59D" stroke-width="2.2" stroke-linecap="round"/></svg>Tu veux tout parfait du premier coup : compte quelques allers-retours par scène.</li>
+        </ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- AUTEUR -->
+<section class="band" style="padding-top:20px" aria-label="L'auteur">
+  <div class="wrap">
+    <div class="author rv">
+      <div class="mark" aria-hidden="true">LD</div>
+      <div>
+        <span class="eyebrow">Qui est derrière Glow</span>
+        <p class="quote">« Je monte des vidéos depuis dix ans. Glow, c'est la méthode que j'utilise pour que l'IA crée mes animations avec mon style, sans After Effects. Je te la transmets, et je t'accompagne chaque semaine. »</p>
+        <p class="sig"><b>Louis</b> · Louis Deploys, business, IA et tech</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRIX -->
+<section class="band" id="rejoindre" style="padding-top:20px">
+  <div class="wrap">
+    <div class="head rv">
+      <span class="eyebrow">Rejoindre</span>
+      <h2>Commence par un appel découverte.</h2>
+      <p>On fait le point sur tes vidéos, ton style et ce que tu veux atteindre. Le tarif et le suivi adapté te sont présentés pendant l'appel.</p>
+    </div>
+    <div class="plans" style="grid-template-columns:minmax(0,560px);justify-content:center">
+      <div class="plan best rv">
+        <div><h3>Glow</h3><p class="for" style="margin-top:6px">Des animations dynamiques et pros, à ton image, en 7 jours.</p></div>
+        <ul>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.4 3.4L15.5 6.8" fill="none" stroke="#2ECC71" stroke-width="2.4" stroke-linecap="round"/></svg>La fiche de style (PDF + JSON)</li>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.4 3.4L15.5 6.8" fill="none" stroke="#2ECC71" stroke-width="2.4" stroke-linecap="round"/></svg>Ton skill personnel, entièrement personnalisé</li>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.4 3.4L15.5 6.8" fill="none" stroke="#2ECC71" stroke-width="2.4" stroke-linecap="round"/></svg>Le workflow script ligne par ligne</li>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.4 3.4L15.5 6.8" fill="none" stroke="#2ECC71" stroke-width="2.4" stroke-linecap="round"/></svg>Un appel par semaine, ajustable</li>
+<li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.4 3.4L15.5 6.8" fill="none" stroke="#2ECC71" stroke-width="2.4" stroke-linecap="round"/></svg>Les bruitages et l'export MP4 inclus dans la méthode</li>
+        </ul>
+        <a class="btn btn-red buy-glow" href="#rejoindre">Réserver un appel découverte</a>
+      </div>
+    </div>
+    <div class="after-row rv">
+      <p style="font-weight:700">Comment<br>ça se passe</p>
+      <ol class="after">
+        <li>Tu m'écris « GLOW » en message privé sur Instagram, ou tu réserves directement.</li>
+        <li>On fait l'appel découverte, tu remplis ta fiche de style.</li>
+        <li>Je prépare ton skill, tu l'installes et tu envoies ton premier script.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="band" id="faq" style="padding-top:20px">
+  <div class="wrap">
+    <div class="head rv"><span class="eyebrow">Questions</span><h2>Avant de réserver</h2></div>
+    <div class="faq">
+      <details><summary>C'est quoi, concrètement, Glow ?<span class="pm" aria-hidden="true">+</span></summary><p>Un accompagnement de 7 jours pour avoir des animations dynamiques et pros dans tes vidéos. Tu remplis des fiches sur ton contenu et ton style, tu installes Claude et un skill personnel que je prépare pour toi, puis tu l'utilises avec tes propres scripts.</p></details>
+      <details><summary>Je monte déjà mes vidéos : c'est pour moi ?<span class="pm" aria-hidden="true">+</span></summary><p>Oui, c'est même le cas principal. Glow ne remplace pas ton montage : il ajoute des animations qui donnent du rythme et un style à tes vidéos, sans que tu apprennes After Effects.</p></details>
+      <details><summary>Combien coûte Glow ?<span class="pm" aria-hidden="true">+</span></summary><p>Le tarif est présenté pendant l'appel découverte, une fois que je sais ce dont tu as besoin.</p></details>
+      <details><summary>Comment se passent les appels ?<span class="pm" aria-hidden="true">+</span></summary><p>Un appel découverte pour commencer, puis un appel par semaine, ajustable. On regarde tes scènes, on corrige ton style et on débloque ce qui coince.</p></details>
+      <details><summary>C'est quoi le skill personnel ?<span class="pm" aria-hidden="true">+</span></summary><p>Un fichier d'instructions que je prépare à partir de ta fiche de style et que tu installes dans Claude. Il applique tes couleurs, ta typo, ton mouvement et ton son à chaque animation.</p></details>
+      <details><summary>Faut-il savoir coder ?<span class="pm" aria-hidden="true">+</span></summary><p>Non. Tu écris en français ce que tu veux voir, Claude écrit le code. Il te suffit de relire et de valider chaque scène.</p></details>
+      <details><summary>De quoi ai-je besoin ?<span class="pm" aria-hidden="true">+</span></summary><p>De Claude, de préférence en version Pro, et de Chrome ou Edge à jour pour exporter. Ça marche sur Mac et Windows.</p></details>
+      <details><summary>Je peux utiliser un autre logiciel de montage que DaVinci Resolve ?<span class="pm" aria-hidden="true">+</span></summary><p>Oui. Les fichiers sont des MP4 H.264 standard à cadence fixe, avec un WAV séparé en option. Ils s'importent dans n'importe quel logiciel de montage.</p></details>
+      <details><summary>Est-ce que ça garantit des vues ?<span class="pm" aria-hidden="true">+</span></summary><p>Non. Glow t'aide à produire des animations propres et un style constant. Les vues dépendent aussi de ton sujet, de ton script et de ta régularité.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL -->
+<section class="final">
+  <div class="wrap">
+    <h2 class="rv">Ta première scène<br><span class="r">t'attend.</span></h2>
+    <p class="rv">Commence par la fiche de style : c'est gratuit et ça prend quelques minutes.</p>
+    <a class="btn btn-red rv" href="fiche-de-style.html" style="min-height:58px;padding:0 30px;font-size:17.5px">Remplir ma fiche de style</a>
+  </div>
+</section>
+
+</main>
+
+<div class="mbar" id="mbar"><div><b>Glow</b><span>Des animations qui claquent</span></div><a class="btn btn-red btn-sm buy" href="#rejoindre">Appel découverte</a></div>
+
+<footer>
+  <div class="wrap">
+    <div style="display:grid;gap:12px">
+      <span>© 2026 Louis Deploys</span>
+      <nav class="foot-nav" aria-label="Pied de page"><a href="#demo">Démo</a><a href="#preuves">Preuves</a><a href="#fiche">Fiche de style</a><a href="#contenu">Parcours</a><a href="#rejoindre">Appel découverte</a><a href="#faq">FAQ</a></nav>
+      <nav class="foot-nav" aria-label="Pages légales"><a href="mentions-legales.html">Mentions légales</a><a href="cgv.html">CGV</a><a href="confidentialite.html">Confidentialité</a></nav>
+    </div>
+    <p>Claude et Claude Code sont des produits d'Anthropic. Glow et ce site sont indépendants, ni affiliés à Anthropic ni approuvés par elle. DaVinci Resolve est une marque de Blackmagic Design.</p>
+  </div>
+</footer>
+
+<script>
+/* Lien de prise de rendez-vous : colle ici ton lien (Calendly, Cal.com…). Vide = le bouton reste sur le bloc « Rejoindre ». */
+const LIEN_GLOW = "";
+function lien(sel, url){ document.querySelectorAll(sel).forEach(a => { if (url) { a.href = url; a.target = "_blank"; a.rel = "noopener"; } }); }
+lien('.buy-glow', LIEN_GLOW);
+
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- Grain ---------- */
+(function(){
+  try{
+    const c = document.createElement('canvas'); c.width = c.height = 160;
+    const g = c.getContext('2d'); const d = g.createImageData(160,160);
+    for (let i=0;i<d.data.length;i+=4){ const v = Math.random()*255; d.data[i]=d.data[i+1]=d.data[i+2]=v; d.data[i+3]=255; }
+    g.putImageData(d,0,0);
+    document.body.style.setProperty('--grain', `url(${c.toDataURL()})`);
+  }catch(e){}
+})();
+
+/* ---------- Démo : les 3 inserts de l'exemple ---------- */
+const W = 1080, H = 1920;
+const WHITE=[245,243,238], RED=[255,77,46], GREEN=[46,204,113], BG='#0E0E10';
+const START=[0,5,11], DUR=[5,6,6], TOTAL=17;
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const prog=(t,a,b)=>clamp((t-a)/(b-a));
+const eio=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+const eback=t=>{const c1=1.5,c3=c1+1;return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2)};
+const mix=(a,b,k)=>`rgb(${Math.round(a[0]+(b[0]-a[0])*k)},${Math.round(a[1]+(b[1]-a[1])*k)},${Math.round(a[2]+(b[2]-a[2])*k)})`;
+const rgba=(c,a)=>`rgba(${c[0]},${c[1]},${c[2]},${a})`;
+const FONT='"Inter", ui-sans-serif, system-ui, sans-serif';
+const CX=480; /* centre décalé pour respecter la marge droite de 120 px */
+
+/* naissances des cartes de l'insert A */
+const births=[0];
+for(let k=0;k<4;k++) births.push(1.0+k*0.28);
+for(let j=1;j<=15;j++) births.push(2.4+1.2*Math.sqrt(j/15));
+
+const stage=document.getElementById('stage');
+const ctx=stage.getContext('2d');
+const grain=document.createElement('canvas'); grain.width=grain.height=256;
+(function(){const g=grain.getContext('2d');const d=g.createImageData(256,256);for(let i=0;i<d.data.length;i+=4){const v=Math.random()*255;d.data[i]=d.data[i+1]=d.data[i+2]=v;d.data[i+3]=9;}g.putImageData(d,0,0);})();
+
+function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+
+function icon(kind,x,y,col){
+  ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=7; ctx.lineJoin='round'; ctx.lineCap='round';
+  if(kind==='mail'){ rr(x-38,y-27,76,54,8); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x-34,y-22); ctx.lineTo(x,y+4); ctx.lineTo(x+34,y-22); ctx.stroke(); }
+  if(kind==='folder'){ ctx.beginPath(); ctx.moveTo(x-38,y+27); ctx.lineTo(x-38,y-27); ctx.lineTo(x-10,y-27); ctx.lineTo(x-2,y-17); ctx.lineTo(x+38,y-17); ctx.lineTo(x+38,y+27); ctx.closePath(); ctx.stroke(); }
+  if(kind==='cal'){ rr(x-36,y-28,72,58,8); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x-36,y-10); ctx.lineTo(x+36,y-10); ctx.moveTo(x-18,y-38); ctx.lineTo(x-18,y-20); ctx.moveTo(x+18,y-38); ctx.lineTo(x+18,y-20); ctx.stroke(); }
+  ctx.restore();
+}
+
+function card(x,y,rot,col,alpha,opt={}){
+  const w=600,h=130;
+  ctx.save(); ctx.globalAlpha*=alpha; ctx.translate(x,y); ctx.rotate(rot);
+  rr(-w/2,-h/2,w,h,24); ctx.fillStyle='#141417'; ctx.fill(); ctx.lineWidth=6; ctx.strokeStyle=col; ctx.stroke();
+  const ck=opt.check||0;
+  rr(-w/2+34,-27,54,54,12);
+  if(ck>0){ ctx.fillStyle=rgba(GREEN,ck); ctx.fill(); ctx.strokeStyle=mix([245,243,238],GREEN,ck); ctx.stroke();
+    ctx.save(); ctx.strokeStyle=BG; ctx.lineWidth=8; ctx.lineCap='round'; ctx.beginPath();
+    const p=clamp(ck*1.2); ctx.moveTo(-w/2+47,0); ctx.lineTo(-w/2+47+11*Math.min(1,p*2),11*Math.min(1,p*2));
+    if(p>.5){ const q=(p-.5)*2; ctx.lineTo(-w/2+58+18*q,11-30*q); } ctx.stroke(); ctx.restore();
+  } else { ctx.strokeStyle=col; ctx.stroke(); }
+  ctx.fillStyle=rgba(WHITE,.85); rr(-w/2+116,-24,opt.icon?250:330,16,8); ctx.fill();
+  ctx.fillStyle=rgba(WHITE,.4); rr(-w/2+116,10,opt.icon?170:220,14,7); ctx.fill();
+  if(opt.icon) icon(opt.icon,w/2-70,0,'#F5F3EE');
+  ctx.restore();
+}
+
+/* pile : n cartes, centre (px,py), échelle s */
+function pile(n,px,py,s,o={}){
+  const sp=o.spacing||24, tint=o.tint||0, alpha=o.alpha==null?1:o.alpha, enter=o.enter;
+  ctx.save(); ctx.translate(px,py); ctx.scale(s,s);
+  for(let i=0;i<n;i++){
+    let dy=0, a=1;
+    if(enter){ const e=enter[i]; dy=e.dy; a=e.a; if(a<=0) continue; }
+    const jx=(((i*37)%5)-2)*7, rot=((((i*53)%7)-3)*0.55)*Math.PI/180;
+    card(jx, 228-i*sp+dy, rot, mix(WHITE,RED,tint), alpha*a);
+  }
+  ctx.restore();
+}
+
+function bigText(txt,x,y,size,col,a=1,weight=900,ls=-0.04){
+  ctx.save(); ctx.globalAlpha*=a; ctx.fillStyle=col; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+  ctx.font=`${weight} ${size}px ${FONT}`;
+  try{ ctx.letterSpacing=(ls*size)+'px'; }catch(e){}
+  ctx.fillText(txt,x,y); ctx.restore();
+}
+
+function drawA(u){
+  let n=0; births.forEach(b=>{ if(u>=b) n++; });
+  const enter=births.map((b,i)=>{ const d=i===0?0.5:0.24; const p=prog(u,b,b+d); return {dy:(1-eback(p))*(i===0?760:110), a:i===0?clamp(p*3):clamp(p*2.5)}; });
+  const tint=clamp((n-8)/12);
+  pile(20,CX,1080,1,{tint,enter});
+  const pop=clamp((u-0.15)/0.3);
+  const pulse = births.reduce((m,b)=>Math.max(m, 1-prog(u,b,b+0.18)) ,0)*(u>0.4?1:0);
+  ctx.save(); ctx.translate(CX,520); const sc=eback(pop)*(1+pulse*0.06); ctx.scale(sc,sc);
+  bigText(String(Math.max(1,n)),0,0,300,mix(WHITE,RED,tint),clamp(pop*2));
+  ctx.restore();
+  bigText(n>=20?'TÂCHES EN ATTENTE':(n>1?'TÂCHES OUVERTES':'TÂCHE OUVERTE'),CX,610,50,rgba(WHITE,.7),clamp((u-.5)*3),800,0.04);
+}
+
+function drawB(u){
+  const k=eio(prog(u,0,.7));
+  ctx.save(); ctx.globalAlpha=1-0.72*k; try{ctx.filter=`blur(${k*5}px)`;}catch(e){}
+  pile(20,CX,1080+k*40,1-0.38*k,{tint:1}); ctx.restore(); try{ctx.filter='none';}catch(e){}
+  const ap=prog(u,.3,.8), sc=eback(ap);
+  const cy=880, r=240;
+  ctx.save(); ctx.translate(CX,cy); ctx.scale(sc,sc); ctx.globalAlpha=clamp(ap*3);
+  ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2); ctx.fillStyle='#0E0E10'; ctx.fill();
+  ctx.lineWidth=22; ctx.strokeStyle=rgba(WHITE,.14); ctx.stroke();
+  const sw=eio(prog(u,.4,1.3));
+  ctx.beginPath(); ctx.arc(0,0,r,-Math.PI/2,-Math.PI/2+Math.PI*2*sw); ctx.strokeStyle='#F5F3EE'; ctx.lineCap='round'; ctx.stroke();
+  for(let i=0;i<12;i++){ const a=i/12*Math.PI*2; ctx.beginPath(); ctx.moveTo(Math.cos(a)*(r-46),Math.sin(a)*(r-46)); ctx.lineTo(Math.cos(a)*(r-62),Math.sin(a)*(r-62)); ctx.lineWidth=6; ctx.strokeStyle=rgba(WHITE,.35); ctx.stroke(); }
+  ctx.fillStyle='#F5F3EE'; ctx.beginPath(); ctx.arc(0,-r-34,16,0,Math.PI*2); ctx.fill(); rr(-30,-r-64,60,22,8); ctx.fill();
+  ctx.restore();
+  bigText('2:00',CX,cy+56,160,'#F5F3EE',clamp((u-.6)*3));
+  bigText('RÈGLE DES 2 MIN',CX,420-(1-eback(prog(u,1,1.5)))*40,92,'#F5F3EE',clamp((u-1)*3));
+  bigText('David Allen · GTD',CX,1205,44,rgba(WHITE,.6),clamp((u-1.6)*3),600,0);
+  const l1=prog(u,2.5,2.9);
+  bigText('< 2 MIN → FAIS-LE',CX,1380+(1-eback(l1))*30,74,'#F5F3EE',clamp(l1*2));
+  const l2=prog(u,3.1,3.5), gk=prog(u,3.4,3.7);
+  ctx.save(); ctx.translate(CX,1520); const s2=eback(l2)*(1+0.08*(1-Math.abs(gk*2-1))*(gk>0&&gk<1?1:0)); ctx.scale(s2,s2);
+  bigText('MAINTENANT',0,0,118,mix(WHITE,GREEN,gk),clamp(l2*2)); ctx.restore();
+}
+
+const pulls=[{t:.8,icon:'mail'},{t:2.0,icon:'folder'},{t:3.2,icon:'cal'}];
+function drawC(v){
+  const k=eio(prog(v,0,.6));
+  let closed=0; pulls.forEach(p=>{ if(v>=p.t+.4) closed++; });
+  const loosen=eio(prog(v,3.9,4.8));
+  const remaining=20-closed;
+  let pulling=0; pulls.forEach(p=>{ if(v>=p.t) pulling++; });
+  const tint=clamp((remaining-8)/12)*(1-loosen);
+  ctx.save(); ctx.globalAlpha=0.28+0.72*k;
+  pile(20-pulling,CX,1120-(1-k)*0+loosen*30,0.62+0.38*k,{tint,spacing:24+loosen*8});
+  ctx.restore();
+  pulls.forEach((p,i)=>{
+    const q=prog(v,p.t,p.t+1.15); if(q<=0||q>=1) return;
+    const out=eback(prog(q,0,.35)), fade=prog(q,.7,1);
+    const top=1120+228-(19-i)*24;
+    const y=top+(700-top)*out - fade*80, x=CX - fade*60;
+    card(x,y,0,'#F5F3EE',1-fade,{icon:p.icon,check:prog(q,.33,.55)});
+  });
+  ctx.save(); ctx.translate(CX,380); const pc=pulls.reduce((m,p)=>Math.max(m,1-prog(v,p.t+.4,p.t+.6)),0)*(v>.9?1:0); ctx.scale(1+pc*.08,1+pc*.08);
+  bigText(String(remaining),0,0,230,mix(WHITE,RED,tint),clamp(v*3)); ctx.restore();
+  const f=prog(v,4.3,4.75);
+  ctx.save(); ctx.globalAlpha=clamp(f*2); ctx.textBaseline='alphabetic'; ctx.font=`900 88px ${FONT}`;
+  const a='3 TÂCHES · ', b='6 MIN', wa=ctx.measureText(a).width, wb=ctx.measureText(b).width;
+  const x0=CX-(wa+wb)/2, yy=1560+(1-eback(f))*30;
+  ctx.fillStyle='#F5F3EE'; ctx.fillText(a,x0,yy); ctx.fillStyle='rgb(46,204,113)'; ctx.fillText(b,x0+wa,yy); ctx.restore();
+}
+
+function render(t){
+  ctx.setTransform(stage.width/W,0,0,stage.height/H,0,0);
+  ctx.globalAlpha=1; ctx.fillStyle=BG; ctx.fillRect(0,0,W,H);
+  const i = t<START[1]?0:(t<START[2]?1:2), u=t-START[i];
+  const z=1+0.035*(u/DUR[i]);
+  ctx.save(); ctx.translate(CX,960); ctx.scale(z,z); ctx.translate(-CX,-960);
+  if(i===0) drawA(u); else if(i===1) drawB(u); else drawC(u);
+  ctx.restore();
+  ctx.globalAlpha=1; ctx.drawImage(grain,0,0,W,H);
+  return i;
+}
+
+/* ---------- Bruitages Web Audio ---------- */
+let actx=null, master=null, soundOn=false;
+function ensureAudio(){
+  if(!actx){ const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return false; actx=new AC(); master=actx.createGain(); master.gain.value=.55; master.connect(actx.destination); }
+  if(actx.state==='suspended') actx.resume();
+  return true;
+}
+function env(g,t,a,peak,d){ g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(peak,t+a); g.gain.exponentialRampToValueAtTime(0.0001,t+a+d); }
+function noiseBuf(){ const b=actx.createBuffer(1,actx.sampleRate*.6,actx.sampleRate); const d=b.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1; return b; }
+let NB=null;
+const SFX={
+  pop(p=1){ const t=actx.currentTime, o=actx.createOscillator(), g=actx.createGain(); o.type='sine'; o.frequency.setValueAtTime(560*p,t); o.frequency.exponentialRampToValueAtTime(260*p,t+.09); env(g,t,.005,.32,.1); o.connect(g).connect(master); o.start(t); o.stop(t+.14); },
+  whoosh(hi=false){ NB=NB||noiseBuf(); const t=actx.currentTime, s=actx.createBufferSource(), f=actx.createBiquadFilter(), g=actx.createGain(); s.buffer=NB; f.type=hi?'highpass':'bandpass'; f.Q.value=hi?.5:1.2; f.frequency.setValueAtTime(hi?1800:400,t); f.frequency.exponentialRampToValueAtTime(hi?6000:2600,t+.32); env(g,t,.08,hi?.12:.22,.3); s.connect(f).connect(g).connect(master); s.start(t); s.stop(t+.45); },
+  thud(){ const t=actx.currentTime, o=actx.createOscillator(), g=actx.createGain(); o.type='sine'; o.frequency.setValueAtTime(130,t); o.frequency.exponentialRampToValueAtTime(52,t+.25); env(g,t,.005,.6,.3); o.connect(g).connect(master); o.start(t); o.stop(t+.4); },
+  tick(){ const t=actx.currentTime, o=actx.createOscillator(), f=actx.createBiquadFilter(), g=actx.createGain(); o.type='square'; o.frequency.value=2200; f.type='highpass'; f.frequency.value=1500; env(g,t,.002,.07,.025); o.connect(f).connect(g).connect(master); o.start(t); o.stop(t+.05); },
+  ding(){ const t=actx.currentTime; [1320,1980].forEach((fr,i)=>{ const o=actx.createOscillator(), g=actx.createGain(); o.type='sine'; o.frequency.value=fr; env(g,t,.004,i?.08:.22,.7); o.connect(g).connect(master); o.start(t); o.stop(t+.8); }); },
+  check(){ const t=actx.currentTime, o=actx.createOscillator(), g=actx.createGain(); o.type='triangle'; o.frequency.setValueAtTime(900,t); o.frequency.exponentialRampToValueAtTime(1500,t+.04); env(g,t,.003,.28,.06); o.connect(g).connect(master); o.start(t); o.stop(t+.1); }
+};
+const events=[{t:0.02,f:()=>SFX.whoosh()}];
+births.forEach((b,i)=>{ if(i>0) events.push({t:b, f:()=>SFX.pop(1+i*0.025)}); });
+events.push({t:births[19]+.02,f:()=>SFX.thud()});
+events.push({t:5.03,f:()=>SFX.whoosh()});
+for(let k=0;k<6;k++) events.push({t:5.6+k*.25,f:()=>SFX.tick()});
+events.push({t:5+3.4,f:()=>SFX.ding()});
+events.push({t:11.02,f:()=>SFX.whoosh()});
+pulls.forEach(p=>events.push({t:11+p.t+.4,f:()=>SFX.check()}));
+events.push({t:11+3.9,f:()=>SFX.whoosh(true)});
+function fire(a,b){ if(!soundOn||!actx) return; events.forEach(e=>{ if(e.t>a && e.t<=b){ try{e.f();}catch(_){} } }); }
+
+/* ---------- Lecture ---------- */
+let playing=!reduce, t=reduce?8.9:0, last=performance.now(), visible=true;
+const chips=[document.getElementById('cA'),document.getElementById('cB'),document.getElementById('cC')];
+const playBtn=document.getElementById('cPlay'), soundBtn=document.getElementById('cSound');
+const fill=document.getElementById('scrubFill'), recLabel=document.getElementById('recLabel');
+let lastIdx=-1;
+function ui(i){ if(i===lastIdx) return; lastIdx=i; chips.forEach((c,k)=>c.setAttribute('aria-pressed',k===i?'true':'false')); recLabel.textContent='INSERT '+'ABC'[i]; }
+function setPlay(p){ playing=p; playBtn.textContent=p?'❚❚':'▶'; playBtn.setAttribute('aria-label',p?'Pause':'Lecture'); playBtn.setAttribute('aria-pressed',p?'false':'true'); last=performance.now(); }
+chips.forEach((c,k)=>c.addEventListener('click',()=>{ t=START[k]; setPlay(true); }));
+playBtn.addEventListener('click',()=>setPlay(!playing));
+soundBtn.addEventListener('click',()=>{
+  soundOn=!soundOn; if(soundOn && !ensureAudio()) soundOn=false;
+  soundBtn.setAttribute('aria-pressed',soundOn?'true':'false'); soundBtn.textContent=soundOn?'Son : activé':'Son : coupé';
+  if(soundOn && !playing) setPlay(true);
+});
+new IntersectionObserver(es=>es.forEach(e=>{visible=e.isIntersecting; last=performance.now();})).observe(stage);
+document.addEventListener('visibilitychange',()=>{ last=performance.now(); });
+
+function loop(now){
+  const dt=Math.min(.1,(now-last)/1000); last=now;
+  if(playing && visible && !document.hidden){
+    const nt=t+dt;
+    if(nt>=TOTAL){ fire(t,TOTAL); t=nt-TOTAL; fire(-1,t); } else { fire(t,nt); t=nt; }
+  }
+  if(visible){ const i=render(t); ui(i); fill.style.width=(t/TOTAL*100)+'%'; }
+  requestAnimationFrame(loop);
+}
+setPlay(playing);
+(document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(()=>{ render(t); requestAnimationFrame(loop); });
+render(t);
+
+/* ---------- Couloirs : cadence variable vs fixe ---------- */
+function rand(seed){ return ()=>{ seed=(seed*16807)%2147483647; return seed/2147483647; }; }
+const rnd=rand(7); const badGaps=[]; for(let i=0;i<400;i++){ let g=1/30*(0.7+rnd()*0.9); if(rnd()<.08) g+=1/30*(1+Math.floor(rnd()*2)); badGaps.push(g); }
+function lane(cv, regular){
+  const c=cv.getContext('2d'); let off=0;
+  function size(){ const r=cv.getBoundingClientRect(), d=devicePixelRatio||1; cv.width=Math.max(10,r.width*d); cv.height=r.height*d; c.setTransform(d,0,0,d,0,0); }
+  size(); addEventListener('resize',size);
+  return function(dt){
+    const r=cv.getBoundingClientRect(), w=r.width, h=r.height, pxs=900;
+    off+=dt*0.6;
+    c.clearRect(0,0,w,h);
+    c.fillStyle='#2A2A30'; c.fillRect(0,h/2-1,w,2);
+    let x=-(off%( regular?1/30:1))*pxs, idx=Math.floor(off*30)%380, tt=0;
+    if(regular){ for(let k=0;x+k/30*pxs<w;k++){ const xx=x+k/30*pxs; c.fillStyle='#2ECC71'; c.fillRect(xx-1.5,h*0.2,3,h*0.6); } }
+    else {
+      let xx=x;
+      while(xx<w){ const g=badGaps[idx%badGaps.length]; const dropped=g>1.8/30;
+        if(dropped){ c.fillStyle='rgba(255,77,46,.18)'; c.fillRect(xx+3,h*0.2,g*pxs-6,h*0.6); }
+        c.fillStyle='#FF4D2E'; c.fillRect(xx-1.5,h*0.2,3,h*0.6); xx+=g*pxs; idx++; }
+    }
+  };
+}
+const laneFns=[lane(document.getElementById('laneBad'),false), lane(document.getElementById('laneGood'),true)];
+let lastL=performance.now();
+function laneLoop(now){ const dt=reduce?0:Math.min(.1,(now-lastL)/1000); lastL=now; laneFns.forEach(f=>f(dt)); requestAnimationFrame(laneLoop); }
+requestAnimationFrame(laneLoop);
+
+/* ---------- Calculateur ---------- */
+const fpsEl=document.getElementById('fps'), durEl=document.getElementById('dur');
+const nf=new Intl.NumberFormat('fr-FR');
+function calc(){
+  const fps=+fpsEl.value; let d=parseFloat(String(durEl.value).replace(',','.'));
+  if(!isFinite(d)||d<=0) d=0;
+  const frames=Math.round(d*fps), per=48000/fps;
+  document.getElementById('oFrames').textContent=nf.format(frames);
+  document.getElementById('oSamples').textContent=nf.format(frames*per);
+  document.getElementById('oPer').textContent=nf.format(per);
+}
+fpsEl.addEventListener('change',calc); durEl.addEventListener('input',calc); calc();
+
+/* ---------- Copier le CLAUDE.md ---------- */
+const copyBtn=document.getElementById('copyMd'), mdText=document.getElementById('mdText');
+copyBtn.addEventListener('click',()=>{
+  const txt=mdText.innerText;
+  const ok=()=>{ copyBtn.textContent='Copié'; copyBtn.classList.add('done'); setTimeout(()=>{copyBtn.textContent='Copier'; copyBtn.classList.remove('done');},2200); };
+  const fallback=()=>{ const r=document.createRange(); r.selectNodeContents(mdText); const sel=getSelection(); sel.removeAllRanges(); sel.addRange(r); copyBtn.textContent='Sélectionné : Ctrl+C'; };
+  try{ navigator.clipboard.writeText(txt).then(ok,fallback); }catch(e){ fallback(); }
+});
+
+/* ---------- Barre d'achat mobile ---------- */
+const mbar=document.getElementById('mbar');
+const heroEl=document.querySelector('.hero'), priceEl=document.getElementById('rejoindre'), finalEl=document.querySelector('.final');
+let pastHero=false, nearBuy=new Set();
+function mbarUpdate(){ mbar.classList.toggle('on', pastHero && nearBuy.size===0); }
+new IntersectionObserver(es=>es.forEach(e=>{ pastHero=!e.isIntersecting && e.boundingClientRect.top<0; mbarUpdate(); })).observe(heroEl);
+const buyIo=new IntersectionObserver(es=>es.forEach(e=>{ e.isIntersecting?nearBuy.add(e.target):nearBuy.delete(e.target); mbarUpdate(); }),{threshold:.15});
+buyIo.observe(priceEl); buyIo.observe(finalEl);
+
+/* ---------- Apparitions, compteurs, jauge ---------- */
+const vh=innerHeight;
+const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.remove('armed'); io.unobserve(e.target); } }),{threshold:.12});
+if(!reduce){
+  document.querySelectorAll('.rv').forEach((el,i)=>{
+    if(el.getBoundingClientRect().top>vh){ el.classList.add('armed'); el.style.transitionDelay=((i%3)*0.07)+'s'; io.observe(el); }
+  });
+}
+const cio=new IntersectionObserver(es=>es.forEach(e=>{
+  if(!e.isIntersecting) return; cio.unobserve(e.target);
+  if(reduce) return;
+  const el=e.target, to=+el.dataset.to, t0=performance.now(), D=1100;
+  (function step(n){ const p=Math.min(1,(n-t0)/D), v=Math.round(to*(1-Math.pow(1-p,3))); el.textContent=v; if(p<1) requestAnimationFrame(step); })(t0);
+}),{threshold:.5});
+document.querySelectorAll('.count').forEach(el=>cio.observe(el));
+const needle=document.getElementById('needle');
+let needleDone=false;
+new IntersectionObserver(es=>es.forEach(e=>{
+  if(!e.isIntersecting||needleDone) return; needleDone=true;
+  if(reduce){ needle.style.transform='rotate(-55deg)'; return; }
+  needle.style.transition='transform 1.1s cubic-bezier(.3,1.5,.5,1)'; needle.style.transform='rotate(58deg)';
+  setTimeout(()=>{ needle.style.transition='transform 1.4s cubic-bezier(.3,1.4,.5,1)'; needle.style.transform='rotate(-55deg)'; },1500);
+}),{threshold:.6}).observe(needle.closest('svg'));
+</script>
+</body>
+</html>

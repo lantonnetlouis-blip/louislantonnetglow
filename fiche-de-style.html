@@ -565,7 +565,7 @@ function buildPdf(s,date){
   doc.text(txt('Créée le '+fr(date)+'  ·  à refaire avant le '+fr(nextReview(date))),M,bandH-8);
   y=bandH+10;
   /* comment l'utiliser */
-  var steps=['Envoie le PDF et le fichier .json en message privé à Louis sur Instagram, avec le mot « GLOW ».','Je lis ta fiche et je te réponds personnellement avec la suite. Si Glow te convient, ton skill sur mesure est préparé à partir de cette fiche.','En attendant, colle la version texte (dernière page) au début d’une conversation avec Claude pour tester ton style.'];
+  var steps=['Renvoie le PDF et le fichier .json dans la conversation Instagram où tu as reçu le lien de cette fiche.','Je lis ta fiche et je te réponds personnellement avec la suite. Si Glow te convient, ton skill sur mesure est préparé à partir de cette fiche.','En attendant, colle la version texte (dernière page) au début d’une conversation avec Claude pour tester ton style.'];
   doc.setFontSize(9.5);
   var wrapped=steps.map(function(t){return doc.splitTextToSize(txt(t),CW-16)});
   var bh=14+wrapped.reduce(function(a,w){return a+w.length*4.6+2},0);
@@ -654,7 +654,7 @@ function renderResult(){
    '</dl></div>'+
    '<div class="card"><h3 style="font-size:1.3rem">Télécharge tes fichiers</h3><div class="actions" style="margin-top:14px"><button class="btn" id="dl-pdf" type="button"'+(pdfOk?'':' disabled')+'>Fiche PDF</button><button class="btn ghost" id="dl-json" type="button">Fichier équipe (.json)</button><button class="btn ghost" id="cp-txt" type="button">Copier la version texte</button></div>'+
    '<p class="note" id="dl-note"></p><div id="fallback"><textarea id="fallback-ta" readonly aria-label="Texte à copier"></textarea></div>'+
-   '<h3 style="font-size:1.1rem;margin-top:22px">Et maintenant</h3><ol class="after"><li>Envoie le PDF et le fichier .json en message privé à Louis sur Instagram, avec le mot « GLOW ».</li><li>Je lis ta fiche et je te réponds personnellement avec la suite. Si Glow te convient, ton skill sur mesure est préparé à partir de cette fiche.</li><li>En attendant, copie la version texte et colle-la au début d’une conversation avec Claude pour tester ton style.</li></ol></div></div>'+
+   '<h3 style="font-size:1.1rem;margin-top:22px">Et maintenant</h3><ol class="after"><li>Renvoie le PDF et le fichier .json dans la conversation Instagram où tu as reçu le lien de cette fiche.</li><li>Je lis ta fiche et je te réponds personnellement avec la suite. Si Glow te convient, ton skill sur mesure est préparé à partir de cette fiche.</li><li>En attendant, copie la version texte et colle-la au début d’une conversation avec Claude pour tester ton style.</li></ol></div></div>'+
    '<div class="nav"><button class="btn ghost" id="back" type="button">Modifier mes réponses</button></div></section>';
   $('#back').onclick=function(){go(5,true)};
   $('#dl-pdf').onclick=function(){saveFile('fiche-style-'+slug(S.compte)+'.pdf',function(date){return buildPdf(S,date)})};

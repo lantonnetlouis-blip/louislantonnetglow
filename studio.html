@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Glow · Moteur de style</title>
+<title>Glow · Studio de style</title>
 <meta name="robots" content="noindex,nofollow">
-<meta name="description" content="Décris le style de vidéo que tu veux. Le moteur Glow l'identifie et te donne un prompt prêt à coller dans Claude.">
+<meta name="description" content="Construis ton style d'animation : un style existant, un site à analyser ou des conseils. Tu obtiens un fichier texte à donner à ton IA.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -60,7 +60,15 @@ textarea:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid va
 .gate .row{display:flex;gap:10px}
 .gate input{flex:1;min-width:0;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:99px;padding:14px 18px;font:inherit}
 .gate .gerr{color:#FF7A5C;min-height:1.5em;margin-top:8px;font-size:.92rem}
+.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:30px}
+.mode{text-align:left;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:16px;padding:16px;font:inherit;cursor:pointer;display:grid;gap:6px;align-content:start}
+.mode b{font-weight:700}.mode span{color:var(--muted);font-size:.88rem;line-height:1.45}
+.mode:hover,.mode.on{border-color:var(--accent)}
+.sites{font:500 .76rem 'JetBrains Mono',monospace;color:var(--muted);margin:-6px 0 10px}
+.sites b{color:var(--ok);font-weight:500}.sites i{color:#FF7A5C;font-style:normal}
+.code .acts{display:flex;gap:8px}
 .note{font-size:.8rem;color:var(--muted);margin-top:12px}
+@media (max-width:640px){.modes{grid-template-columns:1fr}}
 @media (max-width:560px){form{flex-direction:column;align-items:stretch}.send{width:100%}textarea{min-height:84px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important}}
 </style>
@@ -72,9 +80,9 @@ textarea:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid va
     <a class="back" href="index.html">← Retour au site</a>
   </div>
 
-  <span class="eyebrow">Moteur de style</span>
+  <span class="eyebrow">Studio de style</span>
   <h1 id="title">Réservé aux élèves Glow.</h1>
-  <p class="lead" id="lead" data-text="Écris-le comme tu le dirais à un ami. Le moteur trouve le style, te demande ton script ou ton idée, puis te donne un prompt prêt à coller dans Claude." >Entre ton code d'accès pour utiliser le moteur de style.</p>
+  <p class="lead" id="lead" data-text="Donne tes notes et tes inspirations, comme tu les dirais à un ami. Le studio te pose quelques questions, construit ton style, puis te donne un fichier texte à fournir à ton IA pour créer tes animations." >Entre ton code d'accès pour utiliser le studio de style.</p>
 
   <form class="gate" id="gate" autocomplete="off">
     <label for="code">Code d'accès</label>
@@ -84,17 +92,22 @@ textarea:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid va
 
 <div id="appbox" hidden>
 
+  <div class="modes" id="modes">
+    <button type="button" class="mode" data-mode="style"><b>Un style existant</b><span>« Je veux le style d’Apple, d’Iman Gadzhi, de Notion… »</span></button>
+    <button type="button" class="mode" data-mode="site"><b>Un site à analyser</b><span>Colle un lien : couleurs, polices et animations sont relevées.</span></button>
+    <button type="button" class="mode" data-mode="conseil"><b>Des conseils</b><span>Tu ne sais pas encore : le studio te pose des questions.</span></button>
+  </div>
   <div id="thread" aria-live="polite"></div>
 
   <form id="form" autocomplete="off">
-    <textarea id="input" rows="1" maxlength="6000" aria-label="Ta demande" placeholder="Ex. Je souhaite une vidéo motion design comme Apple"></textarea>
-    <button class="send" id="send" type="submit">Trouver le style</button>
+    <textarea id="input" rows="1" maxlength="6000" aria-label="Ta demande" placeholder="Tes notes, inspirations, un style, un lien de site…"></textarea>
+    <button class="send" id="send" type="submit">Envoyer</button>
   </form>
   <div class="chips" id="chips"></div>
   <div class="tools" id="tools" hidden>
     <button class="ghost" id="reset" type="button">Nouvelle demande</button>
   </div>
-  <p class="note">Réponses générées par une IA : relis le prompt avant de l'utiliser.</p>
+  <p class="note">Réponses générées par une IA : relis le fichier avant de l’utiliser. L’analyse d’un site lit son code CSS : elle ne voit pas les animations faites en JavaScript.</p>
 </div>
 
   <p class="cta">Envie d'un style qui est vraiment le tien, appliqué à chaque vidéo ? <a href="fiche-de-style.html">Remplis ta fiche de style</a> (gratuit).</p>
@@ -105,11 +118,13 @@ textarea:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid va
   var API="api/chat";
   var thread=document.getElementById('thread'), form=document.getElementById('form'),
       input=document.getElementById('input'), send=document.getElementById('send'),
-      chips=document.getElementById('chips'), tools=document.getElementById('tools'),
+      chips=document.getElementById('chips'), modes=document.getElementById('modes'), tools=document.getElementById('tools'),
       title=document.getElementById('title'), lead=document.getElementById('lead');
   var messages=[], busy=false, code='';
   try{ code=localStorage.getItem('glow-code')||''; }catch(e){}
   var gate=document.getElementById('gate'), gerr=document.getElementById('gerr'), codeIn=document.getElementById('code'), appbox=document.getElementById('appbox');
+  var MODEHINT={style:['Je veux le style d’Apple','Le style d’Iman Gadzhi','Minimaliste noir et blanc, façon Notion'],site:[],conseil:['Je fais des vidéos sur la finance, que me conseilles-tu ?','Je ne sais pas, pose-moi des questions']};
+  var MODEPH={style:'Ex. Je veux le style d’Iman Gadzhi pour mes vidéos business',site:'Colle l’adresse du site (ex. apple.com) et dis ce que tu veux en retenir',conseil:'Dis ce que tu fais comme vidéos, pour qui, et ce que tu aimes ou pas'};
   var START=["Une vidéo motion design comme Apple","Style néon cyberpunk","Minimaliste noir et blanc, façon Notion","Rétro années 90 avec du grain","Look magazine de mode, très éditorial"];
 
   function esc(s){return s.replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
@@ -117,7 +132,7 @@ textarea:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid va
   function md(text){
     var out='', parts=text.split(/```[^\n]*\n?/);
     for(var i=0;i<parts.length;i++){
-      if(i%2===1){ out+='<div class="code"><div class="top"><span>prompt</span><button type="button" data-copy>Copier</button></div><pre>'+esc(parts[i].replace(/\n$/,''))+'</pre></div>'; continue; }
+      if(i%2===1){ out+='<div class="code"><div class="top"><span>fichier pour ton IA</span><span class="acts"><button type="button" data-copy>Copier</button><button type="button" data-dl>Télécharger .txt</button></span></div><pre>'+esc(parts[i].replace(/\n$/,''))+'</pre></div>'; continue; }
       var lines=parts[i].split('\n'), html='', list=null;
       function close(){ if(list){ html+='</'+list+'>'; list=null; } }
       for(var j=0;j<lines.length;j++){
@@ -132,9 +147,9 @@ textarea:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid va
     return out;
   }
   function addUser(t){ var d=document.createElement('div'); d.className='msg user'; d.textContent=t; thread.appendChild(d); }
-  function addAI(t){ var d=document.createElement('div'); d.className='msg ai'; d.innerHTML=md(t); thread.appendChild(d); d.scrollIntoView({behavior:'smooth',block:'start'}); }
+  function addAI(t,sites){ var d=document.createElement('div'); d.className='msg ai'; if(sites&&sites.length){ d.innerHTML='<div class="sites">'+sites.map(function(x){ return x.ok?'<b>✓ Site analysé : '+esc(x.host)+(x.partial?' (partiel)':'')+'</b>':'<i>✗ Site non analysé : '+esc(x.host||'adresse')+'</i>'; }).join(' · ')+'</div>'; } d.innerHTML+=md(t); thread.appendChild(d); d.scrollIntoView({behavior:'smooth',block:'start'}); }
   function addErr(t){ var d=document.createElement('div'); d.className='msg err'; d.textContent=t; thread.appendChild(d); }
-  function typing(){ var d=document.createElement('div'); d.className='msg ai'; d.id='typing'; d.innerHTML='<div class="typing" aria-label="Le moteur réfléchit"><i></i><i></i><i></i></div>'; thread.appendChild(d); return d; }
+  function typing(){ var d=document.createElement('div'); d.className='msg ai'; d.id='typing'; d.innerHTML='<div class="typing" aria-label="Le studio réfléchit"><i></i><i></i><i></i></div>'; thread.appendChild(d); return d; }
 
   function setChips(list){
     chips.innerHTML='';
@@ -143,18 +158,16 @@ textarea:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid va
   function setBusy(b){ busy=b; send.disabled=b; input.disabled=b; }
   function after(){
     var started=messages.length>0;
-    tools.hidden=!started;
-    if(!started){ send.textContent='Trouver le style'; setChips(START); return; }
-    send.textContent='Envoyer';
-    input.placeholder='Colle ton script, décris ton idée, ou écris « pas de script »';
+    tools.hidden=!started; modes.hidden=started;
+    if(!started){ setChips(START); return; }
+    input.placeholder='Réponds aux questions, ajoute tes notes ou colle ton script';
     var hasPrompt=/```/.test(messages[messages.length-1].content||'');
-    setChips(hasPrompt?['Raccourcis à 15 secondes','Change les couleurs','Rends le rythme plus rapide']:['Pas de script, invente un exemple','J’ai une idée de sujet']);
-    if(!hasPrompt) chips.lastChild.addEventListener('click',function(e){ e.stopImmediatePropagation(); input.value='Mon idée : '; input.focus(); },true);
+    setChips(hasPrompt?['Raccourcis à 15 secondes','Change les couleurs','Rends le rythme plus rapide']:['Fais-le, choisis pour moi','Pas de script, invente un exemple']);
   }
   function submit(){
     var t=input.value.trim();
     if(!t||busy) return;
-    if(!messages.length){ title.textContent='Ton style, ton prompt.'; lead.hidden=true; }
+    if(!messages.length){ title.textContent='Ton style, ton fichier.'; lead.hidden=true; modes.hidden=true; }
     messages.push({role:'user',content:t}); addUser(t); input.value=''; autosize();
     setBusy(true); chips.innerHTML='';
     var tp=typing();
@@ -163,18 +176,24 @@ textarea:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid va
     .then(function(o){
       tp.remove();
       if(o.status===401){ messages.pop(); lock('Ton code n\u2019est plus valide. Entre-le à nouveau.'); }
-      else if(!o.ok||!o.j.text){ messages.pop(); addErr((o.j&&o.j.error)||'Le moteur est indisponible pour le moment.'); }
-      else { messages.push({role:'assistant',content:o.j.text}); addAI(o.j.text); }
+      else if(!o.ok||!o.j.text){ messages.pop(); addErr((o.j&&o.j.error)||'Le studio est indisponible pour le moment.'); }
+      else { messages.push({role:'assistant',content:o.j.text}); addAI(o.j.text,o.j.sites); }
     })
-    .catch(function(){ tp.remove(); messages.pop(); addErr('Impossible de joindre le moteur. Vérifie ta connexion et réessaie.'); })
+    .catch(function(){ tp.remove(); messages.pop(); addErr('Impossible de joindre le studio. Vérifie ta connexion et réessaie.'); })
     .then(function(){ setBusy(false); after(); input.focus(); });
   }
   function autosize(){ input.style.height='auto'; input.style.height=Math.min(input.scrollHeight,220)+'px'; }
 
+  Array.prototype.forEach.call(modes.querySelectorAll('.mode'),function(b){ b.addEventListener('click',function(){
+    var k=b.getAttribute('data-mode'); Array.prototype.forEach.call(modes.querySelectorAll('.mode'),function(x){x.classList.toggle('on',x===b)});
+    input.placeholder=MODEPH[k]; setChips(MODEHINT[k]); input.focus();
+  }); });
   form.addEventListener('submit',function(e){ e.preventDefault(); submit(); });
   input.addEventListener('input',autosize);
   input.addEventListener('keydown',function(e){ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); submit(); } });
   thread.addEventListener('click',function(e){
+    var dl=e.target.closest('[data-dl]');
+    if(dl){ var tx=dl.closest('.code').querySelector('pre').innerText; var bl=new Blob([tx+'\n'],{type:'text/plain;charset=utf-8'}); var a=document.createElement('a'); a.href=URL.createObjectURL(bl); a.download='glow-style-animation.txt'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){ URL.revokeObjectURL(a.href); },2000); dl.textContent='Téléchargé'; setTimeout(function(){ dl.textContent='Télécharger .txt'; },1800); return; }
     var b=e.target.closest('[data-copy]'); if(!b) return;
     var txt=b.closest('.code').querySelector('pre').innerText;
     function ok(){ b.textContent='Copié'; b.classList.add('done'); setTimeout(function(){ b.textContent='Copier'; b.classList.remove('done'); },1800); }
@@ -182,19 +201,19 @@ textarea:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid va
     if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(ok,fb); else fb();
   });
   document.getElementById('reset').addEventListener('click',function(){
-    messages=[]; thread.innerHTML=''; title.textContent='Décris le style que tu veux.'; lead.hidden=false;
-    input.placeholder='Ex. Je souhaite une vidéo motion design comme Apple'; after(); input.focus();
+    messages=[]; thread.innerHTML=''; title.textContent='Construis ton style.'; lead.hidden=false;
+    input.placeholder='Tes notes, inspirations, un style, un lien de site…'; after(); input.focus();
   });
-  function unlock(){ gate.hidden=true; appbox.hidden=false; title.textContent=messages.length?'Ton style, ton prompt.':'Décris le style que tu veux.'; lead.textContent=lead.getAttribute('data-text'); lead.hidden=false; after(); input.focus(); }
-  function lock(msg){ try{ localStorage.removeItem('glow-code'); }catch(e){} code=''; appbox.hidden=true; gate.hidden=false; title.textContent='Réservé aux élèves Glow.'; lead.textContent='Entre ton code d\u2019accès pour utiliser le moteur de style.'; lead.hidden=false; gerr.textContent=msg||''; }
+  function unlock(){ gate.hidden=true; appbox.hidden=false; title.textContent=messages.length?'Ton style, ton fichier.':'Construis ton style.'; lead.textContent=lead.getAttribute('data-text'); lead.hidden=false; after(); input.focus(); }
+  function lock(msg){ try{ localStorage.removeItem('glow-code'); }catch(e){} code=''; appbox.hidden=true; gate.hidden=false; title.textContent='Réservé aux élèves Glow.'; lead.textContent='Entre ton code d\u2019accès pour utiliser le studio de style.'; lead.hidden=false; gerr.textContent=msg||''; }
   function check(c,quiet){
     return fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({check:true,code:c})})
     .then(function(r){ return r.json().then(function(j){ return {ok:r.ok,status:r.status,j:j}; }); })
     .then(function(o){
       if(o.ok){ code=c; try{ localStorage.setItem('glow-code',c); }catch(e){} unlock(); }
       else if(o.status===401){ if(!quiet) gerr.textContent='Code invalide. Vérifie-le ou demande-le à Louis.'; lock(quiet?'':gerr.textContent); }
-      else { gerr.textContent=(o.j&&o.j.error)||'Le moteur est indisponible pour le moment.'; }
-    }).catch(function(){ gerr.textContent='Impossible de joindre le moteur. Réessaie.'; });
+      else { gerr.textContent=(o.j&&o.j.error)||'Le studio est indisponible pour le moment.'; }
+    }).catch(function(){ gerr.textContent='Impossible de joindre le studio. Réessaie.'; });
   }
   gate.addEventListener('submit',function(e){ e.preventDefault(); var c=codeIn.value.trim(); if(!c) return; gerr.textContent=''; check(c,false); });
   appbox.hidden=true; gate.hidden=false;

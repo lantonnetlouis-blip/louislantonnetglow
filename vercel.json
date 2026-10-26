@@ -1,6 +1,6 @@
 {
   "functions": {
-    "api/chat.js": { "maxDuration": 30 }
+    "api/chat.js": { "maxDuration": 60 }
   },
   "headers": [
     { "source": "/studio.html", "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }] }

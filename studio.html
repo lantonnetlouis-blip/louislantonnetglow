@@ -149,7 +149,7 @@ textarea:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid va
   function addUser(t){ var d=document.createElement('div'); d.className='msg user'; d.textContent=t; thread.appendChild(d); }
   function addAI(t,sites){ var d=document.createElement('div'); d.className='msg ai'; if(sites&&sites.length){ d.innerHTML='<div class="sites">'+sites.map(function(x){ return x.ok?'<b>✓ Site analysé : '+esc(x.host)+(x.partial?' (partiel)':'')+'</b>':'<i>✗ Site non analysé : '+esc(x.host||'adresse')+'</i>'; }).join(' · ')+'</div>'; } d.innerHTML+=md(t); thread.appendChild(d); d.scrollIntoView({behavior:'smooth',block:'start'}); }
   function addErr(t){ var d=document.createElement('div'); d.className='msg err'; d.textContent=t; thread.appendChild(d); }
-  function typing(){ var d=document.createElement('div'); d.className='msg ai'; d.id='typing'; d.innerHTML='<div class="typing" aria-label="Le studio réfléchit"><i></i><i></i><i></i></div>'; thread.appendChild(d); return d; }
+  function typing(){ var d=document.createElement('div'); d.className='msg ai'; d.id='typing'; d.innerHTML='<div class="typing" aria-label="Le studio réfléchit"><i></i><i></i><i></i></div><div class="sites">Un fichier complet peut prendre jusqu’à une minute.</div>'; thread.appendChild(d); return d; }
 
   function setChips(list){
     chips.innerHTML='';
